@@ -1,0 +1,363 @@
+{
+  "_comment": "Métadonnées des 12 features du catalogue v2 — source : spec/app-store-catalogue.md v0.4 §3 (lots 1–3). slug → {title_i18n, description_i18n, icon, menu_order, role_min, route, config_schema}. Le tag et le composant viennent de FEATURE_COMPONENTS (components/features/index.js).",
+  "alert-rules": {
+    "title_i18n": {
+      "en": "Alert rules"
+    },
+    "description_i18n": {
+      "en": "Per-building anomaly thresholds (client-side evaluation, UI badge)."
+    },
+    "icon": "notifications_active",
+    "menu_order": 10,
+    "role_min": "gestionnaire",
+    "route": "/alerts",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "thresholds",
+          "label": "Thresholds (building → {kW, eur_day})",
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "sla-dashboard": {
+    "title_i18n": {
+      "en": "SLA dashboard"
+    },
+    "description_i18n": {
+      "en": "Ticket creation → RESOLVED delay vs SLA threshold."
+    },
+    "icon": "timer",
+    "menu_order": 11,
+    "role_min": "gestionnaire",
+    "route": "/sla",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "sla_hours",
+          "label": "SLA threshold (h)",
+          "type": "number",
+          "default": 24
+        }
+      ]
+    }
+  },
+  "report-builder": {
+    "title_i18n": {
+      "en": "Report builder"
+    },
+    "description_i18n": {
+      "en": "Client-side PDF/CSV report from already-fetched data."
+    },
+    "icon": "description",
+    "menu_order": 12,
+    "role_min": "gestionnaire",
+    "route": "/reports",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "period",
+          "label": "Period",
+          "type": "enum",
+          "options": [
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "default": "month"
+        },
+        {
+          "key": "building",
+          "label": "Building",
+          "type": "string"
+        },
+        {
+          "key": "format",
+          "label": "Format",
+          "type": "enum",
+          "options": [
+            "pdf",
+            "csv"
+          ],
+          "default": "pdf"
+        }
+      ]
+    }
+  },
+  "budget-tracker": {
+    "title_i18n": {
+      "en": "Budget tracker"
+    },
+    "description_i18n": {
+      "en": "Consumption vs kWh/€ budget with % alert (default 80)."
+    },
+    "icon": "savings",
+    "menu_order": 20,
+    "role_min": "gestionnaire",
+    "route": "/budget",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "budget_kwh",
+          "label": "Budget (kWh)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "budget_eur",
+          "label": "Budget (€)",
+          "type": "number"
+        },
+        {
+          "key": "alert_pct",
+          "label": "Alert threshold (%)",
+          "type": "number",
+          "default": 80
+        }
+      ]
+    }
+  },
+  "price-optimizer": {
+    "title_i18n": {
+      "en": "Price optimizer"
+    },
+    "description_i18n": {
+      "en": "Load-shifting advice based on hourly prices."
+    },
+    "icon": "trending_down",
+    "menu_order": 21,
+    "role_min": "gestionnaire",
+    "route": "/optimize",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "shiftable_kwh",
+          "label": "Shiftable kWh",
+          "type": "number"
+        },
+        {
+          "key": "window",
+          "label": "Window (HH:MM-HH:MM)",
+          "type": "string",
+          "default": "08:00-20:00"
+        }
+      ]
+    }
+  },
+  "pv-selfconsumption": {
+    "title_i18n": {
+      "en": "PV self-consumption"
+    },
+    "description_i18n": {
+      "en": "PV self-consumption rate, optional battery."
+    },
+    "icon": "solar_power",
+    "menu_order": 22,
+    "role_min": "gestionnaire",
+    "route": "/pv",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "battery_kwh",
+          "label": "Battery (kWh, 0 = none)",
+          "type": "number",
+          "default": 0
+        }
+      ]
+    }
+  },
+  "benchmark": {
+    "title_i18n": {
+      "en": "Building benchmark"
+    },
+    "description_i18n": {
+      "en": "kWh/m² or €/m² comparison across buildings."
+    },
+    "icon": "bar_chart",
+    "menu_order": 23,
+    "role_min": "gestionnaire",
+    "route": "/benchmark",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "metric",
+          "label": "Metric",
+          "type": "enum",
+          "options": [
+            "kwh_m2",
+            "eur_m2"
+          ],
+          "default": "kwh_m2"
+        },
+        {
+          "key": "period",
+          "label": "Period",
+          "type": "enum",
+          "options": [
+            "month",
+            "year"
+          ],
+          "default": "year"
+        },
+        {
+          "key": "ref_building",
+          "label": "Reference building",
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "regulatory-export": {
+    "title_i18n": {
+      "en": "Regulatory export"
+    },
+    "description_i18n": {
+      "en": "Annual per-site CSV export (kWh/year, server-side)."
+    },
+    "icon": "gavel",
+    "menu_order": 24,
+    "role_min": "gestionnaire",
+    "route": "/regulatory",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "year",
+          "label": "Year",
+          "type": "number"
+        },
+        {
+          "key": "format",
+          "label": "Format",
+          "type": "enum",
+          "options": [
+            "csv",
+            "json"
+          ],
+          "default": "csv"
+        }
+      ]
+    }
+  },
+  "weather-correlation": {
+    "title_i18n": {
+      "en": "Weather correlation"
+    },
+    "description_i18n": {
+      "en": "Consumption vs hourly weather (gold weather_hourly)."
+    },
+    "icon": "partly_cloudy_day",
+    "menu_order": 30,
+    "role_min": "gestionnaire",
+    "route": "/weather",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "station",
+          "label": "Weather station",
+          "type": "string"
+        },
+        {
+          "key": "period",
+          "label": "Period",
+          "type": "enum",
+          "options": [
+            "7d",
+            "30d",
+            "90d"
+          ],
+          "default": "30d"
+        }
+      ]
+    }
+  },
+  "city-events": {
+    "title_i18n": {
+      "en": "City events"
+    },
+    "description_i18n": {
+      "en": "Impact of urban events on consumption."
+    },
+    "icon": "location_city",
+    "menu_order": 31,
+    "role_min": "gestionnaire",
+    "route": "/city",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "zone",
+          "label": "Zone",
+          "type": "string"
+        },
+        {
+          "key": "radius_km",
+          "label": "Radius (km)",
+          "type": "number",
+          "default": 5
+        }
+      ]
+    }
+  },
+  "ai-assistant": {
+    "title_i18n": {
+      "en": "AI assistant"
+    },
+    "description_i18n": {
+      "en": "Chat over pod data via POST /app/llm (allowlist)."
+    },
+    "icon": "smart_toy",
+    "menu_order": 32,
+    "role_min": "gestionnaire",
+    "route": "/assistant",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "assets",
+          "label": "Queryable assets",
+          "type": "array",
+          "items": "string"
+        },
+        {
+          "key": "model",
+          "label": "Model",
+          "type": "string",
+          "default": "default"
+        }
+      ]
+    }
+  },
+  "data-sharing": {
+    "title_i18n": {
+      "en": "Data sharing"
+    },
+    "description_i18n": {
+      "en": "Asset sharing offers (DSP control plane, admin)."
+    },
+    "icon": "share",
+    "menu_order": 33,
+    "role_min": "admin",
+    "route": "/sharing",
+    "config_schema": {
+      "fields": [
+        {
+          "key": "asset",
+          "label": "Asset",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "consumer_did",
+          "label": "Consumer DID",
+          "type": "string"
+        },
+        {
+          "key": "duration_days",
+          "label": "Duration (days)",
+          "type": "number",
+          "default": 30
+        }
+      ]
+    }
+  }
+}
