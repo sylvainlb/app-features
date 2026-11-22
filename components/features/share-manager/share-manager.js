@@ -1,9 +1,9 @@
-// <share-manager> — feature `data-sharing` (catalogue lot 3, route /sharing, role admin).
-// Partage de données (contrats DSP) : wrappe les endpoints cœur existants —
-// catalogue DSP + lookup de contrat (état PostgreSQL + jeton TTL, synthèse §4.1).
-// Le parcours self-service « offre → négociation → agreement » n'est PAS démontré
-// côté cœur (catalogue §4.7, à confirmer) : v1 liste les assets et soumet une
-// demande de contrat (asset, consumer_did, duration_days) au plan de contrôle.
+// <share-manager> — feature `data-sharing` (catalogue batch 3, route /sharing, role admin).
+// Data sharing (DSP contracts): wraps existing core endpoints —
+// DSP catalogue + contract lookup (PostgreSQL state + TTL token, summary §4.1).
+// The self-service journey "offer → negotiation → agreement" is NOT demonstrated
+// on the core side (catalogue §4.7, to be confirmed): v1 lists the assets and submits a
+// contract request (asset, consumer_did, duration_days) to the control plane.
 import { html, css } from 'lit';
 import { getJson } from '@facis/app-store/components/boilerplate/index.js';
 import { FeatureComponent } from '../../shared/feature-base.js';
@@ -20,13 +20,13 @@ export async function requestContract({ asset, consumer_did, duration_days }) {
     body: JSON.stringify({ asset, consumer_did, duration_days }),
   });
   if (!res.ok) {
-    const hint404 = 'négociation de contrat non démontrée côté cœur (catalogue §4.7 — à confirmer)';
+    const hint404 = 'contract negotiation not demonstrated on the core side (catalogue §4.7 — to be confirmed)';
     const e = new Error(res.status === 404
       ? `POST /dsp/contracts/request → 404 : ${hint404}`
       : `POST /dsp/contracts/request → ${res.status}`);
     e.status = res.status;
     e.url = url;
-    e.hint = res.status === 404 ? hint404 : 'plan de contrôle DSP — voir catalogue §4.7';
+    e.hint = res.status === 404 ? hint404 : 'DSP control plane — see catalogue §4.7';
     throw e;
   }
   return res.json();
@@ -57,7 +57,7 @@ export class ShareManager extends FeatureComponent {
 
   async load() {
     this.form = getFeatureConfig('data-sharing');
-    // Catalogue DSP (lecture cœur, session requise).
+    // DSP catalogue (core read, session required).
     const cat = await getJson('/dsp/catalogue');
     const ds = cat?.dataset ?? cat?.datasets ?? (Array.isArray(cat) ? cat : []);
     this.assets = ds.map((d) => ({ id: field(d, 'id') ?? field(d, '@id'), title: field(d, 'title') ?? '' }));
@@ -72,7 +72,7 @@ export class ShareManager extends FeatureComponent {
     this.message = '';
     try {
       const res = await requestContract(this.form);
-      this.message = `Contrat demandé : ${field(res, 'id') ?? field(res, '@id') ?? 'OK'}`;
+      this.message = `Contract requested: ${field(res, 'id') ?? field(res, '@id') ?? 'OK'}`;
     } catch (e) {
       this.message = e.message;
     } finally {
@@ -86,16 +86,16 @@ export class ShareManager extends FeatureComponent {
 
   renderContent() {
     return html`
-      <h2 style="margin:0 0 10px;font-size:1.05rem">Partage de données (contrats DSP)</h2>
+      <h2 style="margin:0 0 10px;font-size:1.05rem">Data sharing (DSP contracts)</h2>
       <table>
-        <thead><tr><th>Asset</th><th>Titre</th></tr></thead>
+        <thead><tr><th>Asset</th><th>Title</th></tr></thead>
         <tbody>${this.assets.map((a) => html`<tr><td><code>${a.id}</code></td><td>${a.title}</td></tr>`)}</tbody>
       </table>
       <form @submit=${(e) => { e.preventDefault(); this._request(); }}>
         <label>Asset <input name="asset" .value=${this.form.asset ?? ''} @input=${this._onInput} placeholder="dataset:facis:…"></label>
         <label>Consumer DID <input name="consumer_did" .value=${this.form.consumer_did ?? ''} @input=${this._onInput} placeholder="did:web:…"></label>
-        <label>Durée (jours) <input name="duration_days" type="number" .value=${this.form.duration_days ?? ''} @input=${this._onInput}></label>
-        <button type="submit" ?disabled=${this.busy}>Demander un contrat</button>
+        <label>Duration (days) <input name="duration_days" type="number" .value=${this.form.duration_days ?? ''} @input=${this._onInput}></label>
+        <button type="submit" ?disabled=${this.busy}>Request a contract</button>
       </form>
       ${this.message ? html`<p class="toast">${this.message}</p>` : ''}
     `;

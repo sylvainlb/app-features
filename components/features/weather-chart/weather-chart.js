@@ -1,14 +1,14 @@
-// <weather-chart> — feature `weather-correlation` (catalogue lot 3, route /weather).
-// Météo & degré-jours : conteneur LDP /gold/weather_hourly/ (matview gold existante).
-// Config : station, period
-// (7d|30d|90d). Degré-jours de chauffe = Σ max(0, 18 − T) par jour (base 18 °C).
+// <weather-chart> — feature `weather-correlation` (catalogue batch 3, route /weather).
+// Weather & degree-days: LDP container /gold/weather_hourly/ (existing gold matview).
+// Config: station, period
+// (7d|30d|90d). Heating degree-days = Σ max(0, 18 − T) per day (base 18 °C).
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import { loadAsset, getFeatureConfig, isoDaysAgo, tsOf, pick } from '../../shared/feature-data.js';
 
 export const DJ_BASE = 18;
 
-/** Agrégat journalier : {day, tMoy, dj} — degré-jours base 18 °C. */
+/** Daily aggregate: {day, tAvg, dj} — degree-days base 18 °C. */
 export function degreeDays(rows, base = DJ_BASE) {
   const byDay = new Map();
   for (const r of rows ?? []) {
@@ -19,7 +19,7 @@ export function degreeDays(rows, base = DJ_BASE) {
     const acc = byDay.get(day);
     if (!Number.isNaN(t)) { acc.sum += t; acc.n += 1; acc.dj += Math.max(0, base - t); }
   }
-  return [...byDay.values()].map((a) => ({ day: a.day, tMoy: a.n ? a.sum / a.n : null, dj: a.dj })).sort((a, b) => a.day.localeCompare(b.day));
+  return [...byDay.values()].map((a) => ({ day: a.day, tAvg: a.n ? a.sum / a.n : null, dj: a.dj })).sort((a, b) => a.day.localeCompare(b.day));
 }
 
 export class WeatherChart extends FeatureComponent {
@@ -59,12 +59,12 @@ export class WeatherChart extends FeatureComponent {
   renderContent() {
     const maxDj = Math.max(1, ...this.days.map((d) => d.dj));
     return html`
-      <h2 style="margin:0 0 10px;font-size:1.05rem">Météo & degré-jours${this.station ? ` — ${this.station}` : ''} (${this.period})</h2>
+      <h2 style="margin:0 0 10px;font-size:1.05rem">Weather & degree-days${this.station ? ` — ${this.station}` : ''} (${this.period})</h2>
       <table>
-        <thead><tr><th>Jour</th><th>T° moy</th><th>DJ (base ${DJ_BASE} °C)</th><th></th></tr></thead>
+        <thead><tr><th>Day</th><th>Avg T°</th><th>DD (base ${DJ_BASE} °C)</th><th></th></tr></thead>
         <tbody>${this.days.slice(-30).map((d) => html`<tr>
           <td>${d.day}</td>
-          <td>${d.tMoy == null ? '—' : `${d.tMoy.toFixed(1)} °C`}</td>
+          <td>${d.tAvg == null ? '—' : `${d.tAvg.toFixed(1)} °C`}</td>
           <td>${d.dj.toFixed(1)}</td>
           <td style="width:40%"><div class="bar" style="width:${(d.dj / maxDj) * 100}%"></div></td>
         </tr>`)}</tbody>

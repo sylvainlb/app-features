@@ -1,7 +1,7 @@
-// <shift-advisor> — feature `price-optimizer` (catalogue lot 2, route /optimize).
-// Décalage de conso vers les heures creuses : prix horaires (LDP /gold/price_hourly/, CR-1)
-// + conso horaire (LDP /gold/net_grid_hourly/). Config : shiftable_kwh, window "HH:MM-HH:MM"
-// (regex validée §4.1).
+// <shift-advisor> — feature `price-optimizer` (catalogue batch 2, route /optimize).
+// Shift consumption to off-peak hours: hourly prices (LDP /gold/price_hourly/, CR-1)
+// + hourly consumption (LDP /gold/net_grid_hourly/). Config: shiftable_kwh, window "HH:MM-HH:MM"
+// (regex validated §4.1).
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import { loadAsset, getFeatureConfig, isoDaysAgo, fmtEur, tsOf, pick } from '../../shared/feature-data.js';
@@ -15,7 +15,7 @@ export function parseWindow(window) {
   return { start: toMin(m[1]), end: toMin(m[2]) };
 }
 
-/** Heures de la fenêtre triées par prix croissant ; cumule jusqu'à couvrir shiftable_kwh. */
+/** Hours of the window sorted by ascending price; accumulate until shiftable_kwh is covered. */
 export function bestHours(prices, netGrid, { shiftable_kwh, window } = {}) {
   const w = parseWindow(window);
   if (!w) return [];
@@ -36,7 +36,7 @@ export function bestHours(prices, netGrid, { shiftable_kwh, window } = {}) {
     for (const h of list) {
       if (remaining <= 0) break;
       out.push({ day, hour: h.hour, price: h.price });
-      remaining -= 1; // 1 h ≈ 1 kWh déplaçable par défaut
+      remaining -= 1; // 1 h ≈ 1 kWh shiftable by default
     }
   }
   return out.sort((a, b) => a.price - b.price);
@@ -77,12 +77,12 @@ export class ShiftAdvisor extends FeatureComponent {
 
   renderContent() {
     return html`
-      <div class="head"><h2>Décalage de conso (heures creuses)</h2>
-        <span class="badge st-ok">${this.advice.length} créneau${this.advice.length > 1 ? 'x' : ''} conseillé${this.advice.length > 1 ? 's' : ''}</span></div>
+      <div class="head"><h2>Load shifting (off-peak hours)</h2>
+        <span class="badge st-ok">${this.advice.length} slot${this.advice.length > 1 ? 's' : ''} recommended</span></div>
       ${this.advice.length === 0
-        ? html`<div class="empty">Aucun créneau — vérifiez la fenêtre « window » et les prix (CR-1).</div>`
+        ? html`<div class="empty">No slot — check the "window" setting and the prices (CR-1).</div>`
         : html`<table>
-            <thead><tr><th>Jour</th><th>Heure</th><th>Prix</th></tr></thead>
+            <thead><tr><th>Day</th><th>Hour</th><th>Price</th></tr></thead>
             <tbody>${this.advice.slice(0, 24).map((a) => html`<tr>
               <td>${a.day}</td><td>${String(a.hour).padStart(2, '0')}:00</td><td>${fmtEur(a.price)}/kWh</td>
             </tr>`)}</tbody>

@@ -1,9 +1,9 @@
-// <report-form> — feature `report-builder` (catalogue lot 1, route /reports).
-// v1 = génération **PDF/CSV côté client** depuis les données déjà fetchées,
-// téléchargement direct (décision §4.3 ; `recipients`/mail = v2, aucun canal mail).
-// Le formulaire est piloté par le config_schema de la feature (période, bâtiment,
-// format) et persiste dans prefs.<slug>.config via appStore.patchPrefs (forme R1).
-// Données : conteneurs LDP /gold/net_grid_hourly/ + /gold/energy_cost_daily/ (LDP-only).
+// <report-form> — feature `report-builder` (catalogue batch 1, route /reports).
+// v1 = **client-side PDF/CSV generation** from already-fetched data,
+// direct download (decision §4.3; `recipients`/mail = v2, no mail channel).
+// The form is driven by the feature's config_schema (period, building,
+// format) and persists in prefs.<slug>.config via appStore.patchPrefs (form R1).
+// Data: LDP containers /gold/net_grid_hourly/ + /gold/energy_cost_daily/ (LDP-only).
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import appStore from '@facis/app-store/components/shared/app-store-api.js';
@@ -17,10 +17,10 @@ export const PERIODS = {
   year: () => ({ from: new Date(new Date().getFullYear(), 0, 1).toISOString(), to: new Date().toISOString() }),
 };
 
-/** Lignes du rapport : conso horaire (LDP) + coût journalier (LDP). */
+/** Report rows: hourly consumption (LDP) + daily cost (LDP). */
 export async function buildReportRows({ period, building }) {
   const win = (PERIODS[period] ?? PERIODS.month)();
-  const hourly = await loadAsset('net_grid_hourly', win); // conteneur LDP + fenêtrage client
+  const hourly = await loadAsset('net_grid_hourly', win); // LDP container + client-side windowing
   const costs = (await loadAsset('energy_cost_daily')).filter((c) => {
     const d = field(c, 'day');
     return (!win.from || d >= win.from.slice(0, 10)) && (!win.to || d <= win.to.slice(0, 10)) && (!building || String(pick(c, 'site_id', 'meter_id')) === String(building));
@@ -33,22 +33,22 @@ export async function buildReportRows({ period, building }) {
 }
 
 export function reportCsv(summary) {
-  return toCsv([{ metrique: 'conso_kwh', valeur: summary.kwh.toFixed(1) },
-                { metrique: 'cout_eur', valeur: summary.eur.toFixed(2) },
-                { metrique: 'jours_couverts', valeur: summary.days },
-                { metrique: 'fenetre', valeur: `${summary.from} → ${summary.to}` }],
-    [{ key: 'metrique', label: 'metrique' }, { key: 'valeur', label: 'valeur' }]);
+  return toCsv([{ metric: 'consumption_kwh', value: summary.kwh.toFixed(1) },
+                { metric: 'cost_eur', value: summary.eur.toFixed(2) },
+                { metric: 'days_covered', value: summary.days },
+                { metric: 'window', value: `${summary.from} → ${summary.to}` }],
+    [{ key: 'metric', label: 'metric' }, { key: 'value', label: 'value' }]);
 }
 
-/** PDF via jsPDF chargé à la volée (dépendance optionnelle) ; repli CSV si absent. */
+/** PDF via jsPDF loaded on the fly (optional dependency); CSV fallback if missing. */
 async function reportPdf(summary) {
   try {
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF();
-    doc.text('Rapport énergétique', 14, 16);
-    doc.text(`Conso : ${summary.kwh.toFixed(1)} kWh`, 14, 28);
-    doc.text(`Coût : ${summary.eur.toFixed(2)} €`, 14, 36);
-    doc.text(`Fenêtre : ${summary.from} → ${summary.to}`, 14, 44);
+    doc.text('Energy report', 14, 16);
+    doc.text(`Consumption: ${summary.kwh.toFixed(1)} kWh`, 14, 28);
+    doc.text(`Cost: ${summary.eur.toFixed(2)} €`, 14, 36);
+    doc.text(`Window: ${summary.from} → ${summary.to}`, 14, 44);
     return { content: doc.output('blob'), mime: 'application/pdf', ext: 'pdf' };
   } catch {
     return { content: reportCsv(summary), mime: 'text/csv', ext: 'csv' };
@@ -86,7 +86,7 @@ export class ReportForm extends FeatureComponent {
 
   async _save() {
     await appStore.patchPrefs(configPatch('report-builder', this.values));
-    this.message = 'Configuration enregistrée.';
+    this.message = 'Configuration saved.';
   }
 
   async _generate() {
@@ -97,11 +97,11 @@ export class ReportForm extends FeatureComponent {
       const format = this.values.format ?? 'csv';
       if (format === 'pdf') {
         const pdf = await reportPdf(summary);
-        download(`rapport-${this.values.period ?? 'month'}.${pdf.ext}`, pdf.content, pdf.mime);
+        download(`report-${this.values.period ?? 'month'}.${pdf.ext}`, pdf.content, pdf.mime);
       } else {
-        download(`rapport-${this.values.period ?? 'month'}.csv`, reportCsv(summary));
+        download(`report-${this.values.period ?? 'month'}.csv`, reportCsv(summary));
       }
-      this.message = `Rapport ${format} généré (${summary.kwh.toFixed(1)} kWh, ${summary.eur.toFixed(2)} €).`;
+      this.message = `${format} report generated (${summary.kwh.toFixed(1)} kWh, ${summary.eur.toFixed(2)} €).`;
     } finally {
       this.busy = false;
     }
@@ -115,23 +115,23 @@ export class ReportForm extends FeatureComponent {
   renderContent() {
     const v = this.values;
     return html`
-      <h2 style="margin:0 0 10px;font-size:1.05rem">Rapports PDF/CSV</h2>
+      <h2 style="margin:0 0 10px;font-size:1.05rem">PDF/CSV reports</h2>
       <form @submit=${(e) => { e.preventDefault(); this._generate(); }}>
-        <label>Période
+        <label>Period
           <select name="period" .value=${v.period ?? 'month'} @change=${this._onInput}>
             ${['day', 'week', 'month', 'year'].map((p) => html`<option value=${p}>${p}</option>`)}
           </select>
         </label>
-        <label>Bâtiment (site_id, vide = tous)
-          <input name="building" .value=${v.building ?? ''} @input=${this._onInput} placeholder="ex. site-1">
+        <label>Building (site_id, empty = all)
+          <input name="building" .value=${v.building ?? ''} @input=${this._onInput} placeholder="e.g. site-1">
         </label>
         <label>Format
           <select name="format" .value=${v.format ?? 'csv'} @change=${this._onInput}>
             ${['csv', 'pdf'].map((f) => html`<option value=${f}>${f}</option>`)}
           </select>
         </label>
-        <button type="submit" ?disabled=${this.busy}>${this.busy ? 'Génération…' : 'Générer'}</button>
-        <button type="button" class="secondary" @click=${() => this._save()}>Enregistrer la config</button>
+        <button type="submit" ?disabled=${this.busy}>${this.busy ? 'Generating…' : 'Generate'}</button>
+        <button type="button" class="secondary" @click=${() => this._save()}>Save config</button>
       </form>
       ${this.message ? html`<p class="toast">${this.message}</p>` : ''}
     `;

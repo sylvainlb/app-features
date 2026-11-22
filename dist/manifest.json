@@ -9,17 +9,19 @@
       "version": "0.1.0",
       "file": "dist/alert-rules.js",
       "cdn_url": "/features-dist/alert-rules.js",
-      "sri": "sha384-8m8wYLdwVtlbFSR+dJeLN4UcCmBff7Lo4sBOJN4EGw9JdBTxT+qRAGIj0gCrW9Cx",
-      "bytes": 49931,
+      "sri": "sha384-+XjaiTK0OLt1DlooLHQEew0E2nPLbF8GiFTpbXkR1OQdFS9llKgp4vB2FeVKL6Bk",
+      "bytes": 50974,
       "title_i18n": {
-        "en": "Alert rules"
+        "en": "Alert rules",
+        "fr": "Règles d'alerte"
       },
       "description_i18n": {
-        "en": "Per-building anomaly thresholds (client-side evaluation, UI badge)."
+        "en": "Per-building anomaly thresholds (client-side evaluation, UI badge).",
+        "fr": "Seuils d'anomalie par bâtiment (évaluation côté client, badge UI)."
       },
       "icon": "notifications_active",
       "menu_order": 10,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/alerts",
       "config_schema": {
         "fields": [
@@ -37,17 +39,19 @@
       "version": "0.1.0",
       "file": "dist/sla-dashboard.js",
       "cdn_url": "/features-dist/sla-dashboard.js",
-      "sri": "sha384-tboccAyD/GOC7oBSwWNhiLcF5ljGa0WHz/8AqDBJ4N9j4BN6p4T4KDP8cFqtqnjM",
-      "bytes": 49163,
+      "sri": "sha384-FopndsTUI1BRKjm08sSK7NTHqS/bc6x2n9tg5hbVsFE6nImjV7A/Do3akrFH4rZE",
+      "bytes": 50235,
       "title_i18n": {
-        "en": "SLA dashboard"
+        "en": "SLA dashboard",
+        "fr": "Tableau de bord SLA"
       },
       "description_i18n": {
-        "en": "Ticket creation → RESOLVED delay vs SLA threshold."
+        "en": "Ticket creation → RESOLVED delay vs SLA threshold.",
+        "fr": "Délai création du ticket → RESOLVED vs seuil SLA."
       },
       "icon": "timer",
       "menu_order": 11,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/sla",
       "config_schema": {
         "fields": [
@@ -66,17 +70,19 @@
       "version": "0.1.0",
       "file": "dist/report-builder.js",
       "cdn_url": "/features-dist/report-builder.js",
-      "sri": "sha384-uPusXkGG/z0y6Usnk1owu26jJ2F9fL9o5CTWL78uN0hyN6p/nLUnB3c2lbBsJKpS",
-      "bytes": 52120,
+      "sri": "sha384-kxZYz2S/Dx7M83EyJR6mriLydNOSNUCecBZdLxNqXMRS+El5KwrwpXYOnMucy3Zi",
+      "bytes": 53121,
       "title_i18n": {
-        "en": "Report builder"
+        "en": "Report builder",
+        "fr": "Générateur de rapports"
       },
       "description_i18n": {
-        "en": "Client-side PDF/CSV report from already-fetched data."
+        "en": "Client-side PDF/CSV report from already-fetched data.",
+        "fr": "Rapport PDF/CSV côté client à partir des données déjà récupérées."
       },
       "icon": "description",
       "menu_order": 12,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/reports",
       "config_schema": {
         "fields": [
@@ -116,17 +122,19 @@
       "version": "0.1.0",
       "file": "dist/budget-tracker.js",
       "cdn_url": "/features-dist/budget-tracker.js",
-      "sri": "sha384-7ClWhDuY/fpDYkati3ziyDWJOfvRoZgEvU90MiYqkezxDQJZyD3Erhqloj+G4f/3",
-      "bytes": 50108,
+      "sri": "sha384-zfoMVd7H7hcGEbznQA3cnoD2Axt5jhQ7s9O6O5bz0QPFbpMnsUuNkyqKUbhkgGPB",
+      "bytes": 51177,
       "title_i18n": {
-        "en": "Budget tracker"
+        "en": "Budget tracker",
+        "fr": "Suivi de budget"
       },
       "description_i18n": {
-        "en": "Consumption vs kWh/€ budget with % alert (default 80)."
+        "en": "Consumption vs kWh/€ budget with % alert (default 80).",
+        "fr": "Conso vs budget kWh/€ avec alerte en % (défaut 80)."
       },
       "icon": "savings",
       "menu_order": 20,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/budget",
       "config_schema": {
         "fields": [
@@ -156,17 +164,19 @@
       "version": "0.1.0",
       "file": "dist/price-optimizer.js",
       "cdn_url": "/features-dist/price-optimizer.js",
-      "sri": "sha384-HlBdAoeiZCFPJpODAknQJktyoJHDMb5WUeyWpo++aMEc5uVMxp7twTtqZNHCf92g",
-      "bytes": 49259,
+      "sri": "sha384-r7vvzdRMwsH9HGTRrDp8L9LPcKGOuD5xS8X6s5wI3/DcwwTuz3XJ3GHKiZpt4tlo",
+      "bytes": 50276,
       "title_i18n": {
-        "en": "Price optimizer"
+        "en": "Price optimizer",
+        "fr": "Optimiseur de prix"
       },
       "description_i18n": {
-        "en": "Load-shifting advice based on hourly prices."
+        "en": "Load-shifting advice based on hourly prices.",
+        "fr": "Conseil de décalage de conso selon les prix horaires."
       },
       "icon": "trending_down",
       "menu_order": 21,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/optimize",
       "config_schema": {
         "fields": [
@@ -190,17 +200,19 @@
       "version": "0.1.0",
       "file": "dist/pv-selfconsumption.js",
       "cdn_url": "/features-dist/pv-selfconsumption.js",
-      "sri": "sha384-2uwkZagelHBscCB3zGaaaFC9+RbKNjYdc3O+cXCScdqkbLDOOFnV3jV4L6DdhbPE",
-      "bytes": 48827,
+      "sri": "sha384-tEcDsKykwNnvo4mm31t7S1mJd/OQdKpN/SlRB+MGyRctTqbDcRqOPoKLKsy3Isfa",
+      "bytes": 49897,
       "title_i18n": {
-        "en": "PV self-consumption"
+        "en": "PV self-consumption",
+        "fr": "Autoconsommation PV"
       },
       "description_i18n": {
-        "en": "PV self-consumption rate, optional battery."
+        "en": "PV self-consumption rate, optional battery.",
+        "fr": "Taux d'autoconsommation PV, batterie optionnelle."
       },
       "icon": "solar_power",
       "menu_order": 22,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/pv",
       "config_schema": {
         "fields": [
@@ -219,17 +231,19 @@
       "version": "0.1.0",
       "file": "dist/benchmark.js",
       "cdn_url": "/features-dist/benchmark.js",
-      "sri": "sha384-rYYt4hM1BiS0RrYatZqYQjfRhgXLy+J08lEqRTbl4q9OpyXH3JvQv/Oo8/ac11mM",
-      "bytes": 50222,
+      "sri": "sha384-W0/8ygLTq5YjUdEvyYH3q8BdNGx7kbKGKaYh8U4CWWtL2Den+FyDE7aVBu11x5Wr",
+      "bytes": 51273,
       "title_i18n": {
-        "en": "Building benchmark"
+        "en": "Building benchmark",
+        "fr": "Benchmark des bâtiments"
       },
       "description_i18n": {
-        "en": "kWh/m² or €/m² comparison across buildings."
+        "en": "kWh/m² or €/m² comparison across buildings.",
+        "fr": "Comparaison kWh/m² ou €/m² entre bâtiments."
       },
       "icon": "bar_chart",
       "menu_order": 23,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/benchmark",
       "config_schema": {
         "fields": [
@@ -267,17 +281,19 @@
       "version": "0.1.0",
       "file": "dist/regulatory-export.js",
       "cdn_url": "/features-dist/regulatory-export.js",
-      "sri": "sha384-g3BnZteHrfiWFzvEld2+1Ij/FffULNrDTcYpLSDOS7or3Sue19S1yVRqNDrPOyuf",
-      "bytes": 49625,
+      "sri": "sha384-QU/xLemVINEW13jnu1D2T/vU7IUstAZ2aaAbxIm/G2XFve7AUNPpTsRvmrFax/Sk",
+      "bytes": 50666,
       "title_i18n": {
-        "en": "Regulatory export"
+        "en": "Regulatory export",
+        "fr": "Export réglementaire"
       },
       "description_i18n": {
-        "en": "Annual per-site CSV export (kWh/year, server-side)."
+        "en": "Annual per-site CSV export (kWh/year, server-side).",
+        "fr": "Export CSV annuel par site (kWh/an, côté serveur)."
       },
       "icon": "gavel",
       "menu_order": 24,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/regulatory",
       "config_schema": {
         "fields": [
@@ -305,17 +321,19 @@
       "version": "0.1.0",
       "file": "dist/weather-correlation.js",
       "cdn_url": "/features-dist/weather-correlation.js",
-      "sri": "sha384-6FL6oc3issJOM/+SEVLrgq7R4AzvNWYthM88dwZ5UiEMIkfOe3H+DjMzu4EvKvGy",
-      "bytes": 48638,
+      "sri": "sha384-IwfGYkDYTiie7xzfyGAnkoB7U4/fmK7eiVk6SWIIDAKpmKolZxHGTzxg40/q5HKB",
+      "bytes": 49710,
       "title_i18n": {
-        "en": "Weather correlation"
+        "en": "Weather correlation",
+        "fr": "Corrélation météo"
       },
       "description_i18n": {
-        "en": "Consumption vs hourly weather (gold weather_hourly)."
+        "en": "Consumption vs hourly weather (gold weather_hourly).",
+        "fr": "Conso vs météo horaire (gold weather_hourly)."
       },
       "icon": "partly_cloudy_day",
       "menu_order": 30,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/weather",
       "config_schema": {
         "fields": [
@@ -344,17 +362,19 @@
       "version": "0.1.0",
       "file": "dist/city-events.js",
       "cdn_url": "/features-dist/city-events.js",
-      "sri": "sha384-Se0kS9ERM8PsvNF61cs5dKTXqRDY1xDYRwa3xGvOwrbuv3fZ+JwrxLbTflRSUrsY",
-      "bytes": 47633,
+      "sri": "sha384-e7WfLWIcP63gFk2tSj24TkjvEAH7Bg3xFAolgi4OyuApKBp6h5FaerFcL0j9rGui",
+      "bytes": 48688,
       "title_i18n": {
-        "en": "City events"
+        "en": "City events",
+        "fr": "Événements ville"
       },
       "description_i18n": {
-        "en": "Impact of urban events on consumption."
+        "en": "Impact of urban events on consumption.",
+        "fr": "Impact des événements urbains sur la conso."
       },
       "icon": "location_city",
       "menu_order": 31,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/city",
       "config_schema": {
         "fields": [
@@ -378,17 +398,19 @@
       "version": "0.1.0",
       "file": "dist/ai-assistant.js",
       "cdn_url": "/features-dist/ai-assistant.js",
-      "sri": "sha384-ojrA4DcROS1UnIPRr5pLzWvWrH8w3NwrMtpu56GX126EHTpz94uI2RTy26vxStJ4",
-      "bytes": 47778,
+      "sri": "sha384-81uMSZoAi4506vVC1Ac6fpdq+aqqz/u1EcrWtjbMrcrelTP8ucZuzylVKJsIpDKK",
+      "bytes": 48799,
       "title_i18n": {
-        "en": "AI assistant"
+        "en": "AI assistant",
+        "fr": "Assistant IA"
       },
       "description_i18n": {
-        "en": "Chat over pod data via POST /app/llm (allowlist)."
+        "en": "Chat over pod data via POST /app/llm (allowlist).",
+        "fr": "Chat sur les données du pod via POST /app/llm (allowlist)."
       },
       "icon": "smart_toy",
       "menu_order": 32,
-      "role_min": "gestionnaire",
+      "role_min": "manager",
       "route": "/assistant",
       "config_schema": {
         "fields": [
@@ -413,13 +435,15 @@
       "version": "0.1.0",
       "file": "dist/data-sharing.js",
       "cdn_url": "/features-dist/data-sharing.js",
-      "sri": "sha384-f+dUk3jGRCLTX0v9C4snoX1dLSguVgZ0LeD8LCXr7YsXelQH2v1eyrpmdk+C+V1E",
-      "bytes": 47791,
+      "sri": "sha384-lu7mIDem3GmaSKVGs5xIMF7koKcMe2H1MdFLVSkEvRbStX96Pxie1rTb3JN6784K",
+      "bytes": 48835,
       "title_i18n": {
-        "en": "Data sharing"
+        "en": "Data sharing",
+        "fr": "Partage de données"
       },
       "description_i18n": {
-        "en": "Asset sharing offers (DSP control plane, admin)."
+        "en": "Asset sharing offers (DSP control plane, admin).",
+        "fr": "Offres de partage d'assets (plan de contrôle DSP, admin)."
       },
       "icon": "share",
       "menu_order": 33,

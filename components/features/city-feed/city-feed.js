@@ -1,12 +1,12 @@
-// <city-feed> — feature `city-events` (catalogue lot 3, route /city).
-// Événements ville : conteneur LDP /gold/city_event_hourly/ (matview CR-1 à partir de
-// silver.city_event, publiée asset DSP). Config : zone, radius_km.
-// Dépend CR-1 (publication LDP).
+// <city-feed> — feature `city-events` (catalogue batch 3, route /city).
+// City events: LDP container /gold/city_event_hourly/ (matview CR-1 from
+// silver.city_event, published as a DSP asset). Config: zone, radius_km.
+// Depends on CR-1 (LDP publication).
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import { loadAsset, getFeatureConfig, isoDaysAgo, pick } from '../../shared/feature-data.js';
 
-/** Filtre zone (égalité sur le champ zone/ville) ; radius_km informatif (pas de géometrie côté client v1). */
+/** Zone filter (equality on the zone/city field); radius_km is informational (no client-side geometry in v1). */
 export function filterEvents(rows, { zone } = {}) {
   if (!zone) return rows ?? [];
   return (rows ?? []).filter((r) => String(pick(r, 'zone_id', 'zone', 'city') ?? '') === String(zone));
@@ -25,7 +25,7 @@ export class CityFeed extends FeatureComponent {
 
   async load() {
     const config = getFeatureConfig('city-events');
-    const rows = await loadAsset('city_event_hourly', { from: isoDaysAgo(30) }); // pas de borne `to` : un flux d'événements montre aussi à venir
+    const rows = await loadAsset('city_event_hourly', { from: isoDaysAgo(30) }); // no `to` bound: an event feed also shows upcoming events
     this.events = filterEvents(rows, config);
     this.objects = this.events;
     return this.events;
@@ -35,11 +35,11 @@ export class CityFeed extends FeatureComponent {
 
   renderContent() {
     return html`
-      <h2 style="margin:0 0 10px;font-size:1.05rem">Événements ville</h2>
+      <h2 style="margin:0 0 10px;font-size:1.05rem">City events</h2>
       ${this.events.length === 0
-        ? html`<div class="empty">Aucun événement (vérifiez la zone, CR-1).</div>`
+        ? html`<div class="empty">No event (check the zone, CR-1).</div>`
         : html`<table>
-            <thead><tr><th>Début</th><th>Nom</th><th>Zone</th><th>Type</th></tr></thead>
+            <thead><tr><th>Start</th><th>Name</th><th>Zone</th><th>Type</th></tr></thead>
             <tbody>${this.events.map((e) => html`<tr>
               <td>${pick(e, 'event_timestamp', 'hour', 'start') ?? '—'}</td>
               <td>${pick(e, 'event_type', 'type') ?? '—'}</td>

@@ -1,12 +1,12 @@
-// <benchmark-view> — feature `benchmark` (catalogue lot 2, route /benchmark).
-// Comparaison des bâtiments en kWh/m² (ou €/m²) — config metric (kwh_m2|eur_m2),
-// period (month|year), ref_building. Données : conteneur LDP (conso) + /buildings/
-// (surface `area_m2`, CR-2 : saisie manuelle v1). Dépend CR-2 (publication LDP).
+// <benchmark-view> — feature `benchmark` (catalogue batch 2, route /benchmark).
+// Building comparison in kWh/m² (or €/m²) — config metric (kwh_m2|eur_m2),
+// period (month|year), ref_building. Data: LDP container (consumption) + /buildings/
+// (area `area_m2`, CR-2: manual entry v1). Depends on CR-2 (LDP publication).
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import { loadAsset, getFeatureConfig, monthBounds, field, pick, fmtKwh, fmtEur } from '../../shared/feature-data.js';
 
-/** Lignes de benchmark : {building, name, kwh, eur, area, kwhM2, eurM2}. */
+/** Benchmark rows: {building, name, kwh, eur, area, kwhM2, eurM2}. */
 export function benchmarkRows(buildings, costRows, { metric = 'kwh_m2', period = 'month' } = {}) {
   const { from } = period === 'year'
     ? { from: new Date(new Date().getFullYear(), 0, 1).toISOString() }
@@ -67,7 +67,7 @@ export class BenchmarkView extends FeatureComponent {
       loadAsset('buildings'),
       loadAsset('annual_site_consumption', { from: period === 'year' ? new Date(new Date().getFullYear(), 0, 1).toISOString() : monthBounds().from }).catch(() => []),
     ]);
-    // annual_site_consumption est annuel (CR-4) ; pour period=month on retombe sur energy_cost_daily LDP
+    // annual_site_consumption is annual (CR-4); for period=month we fall back on energy_cost_daily LDP
     let costRows = costs;
     if (period !== 'year') {
       const daily = await loadAsset('energy_cost_daily');
@@ -83,9 +83,9 @@ export class BenchmarkView extends FeatureComponent {
   renderContent() {
     const unit = this.metric === 'eur_m2' ? '€/m²' : 'kWh/m²';
     return html`
-      <h2 style="margin:0 0 10px;font-size:1.05rem">Comparaison des bâtiments (${unit})</h2>
+      <h2 style="margin:0 0 10px;font-size:1.05rem">Building comparison (${unit})</h2>
       <table>
-        <thead><tr><th>Bâtiment</th><th>Surface</th><th>kWh</th><th>€</th><th>${unit}</th></tr></thead>
+        <thead><tr><th>Building</th><th>Area</th><th>kWh</th><th>€</th><th>${unit}</th></tr></thead>
         <tbody>
           ${this.rows.map((r) => html`<tr class=${r.building === this.ref ? 'ref' : ''}>
             <td>${r.name}${r.building === this.ref ? ' ★' : ''}</td>
@@ -96,7 +96,7 @@ export class BenchmarkView extends FeatureComponent {
           </tr>`)}
         </tbody>
       </table>
-      <p class="fresh">★ = bâtiment de référence. Surface "area_m2" saisie manuellement (CR-2).</p>
+      <p class="fresh">★ = reference building. Area "area_m2" entered manually (CR-2).</p>
     `;
   }
 }

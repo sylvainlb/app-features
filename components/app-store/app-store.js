@@ -1,16 +1,16 @@
-// <app-store> — route /store : liste du catalogue + toggles + configuration par
-// feature + édition admin des métadonnées (spec app-store-spec.md v0.4 §1.6.2,
+// <app-store> — route /store: catalogue list + toggles + per-feature
+// configuration + admin editing of metadata (spec app-store-spec.md v0.4 §1.6.2,
 // CA-A2, CA-A3).
 //
-// - Liste : ComponentObjectsHandler sur /features/ + prefs courante.
-// - Toggle : PATCH merge-patch /prefs/<pk> body {"prefs": {"<slug>": {"enabled":…}}}
-//   (forme R1 §1.5) via window.appStore.patchPrefs → événement `save` (§1.9.9) :
-//   <app-menu> et la route courante se mettent à jour à chaud. 412 → toast.
-// - Configurer : modale dans /store (§1.9.11), formulaire piloté par le
-//   config_schema de la feature (méta-schéma §1.9.6), écrit la sous-clé
-//   `config` des prefs (validation front v1, CA-A3).
-// - Admin (v1) : édition des métadonnées UNIQUEMENT des features déjà
-//   packagées (§1.9.8) → PATCH /features/<slug> (IRI par slug, CA-A7).
+// - List: ComponentObjectsHandler on /features/ + current prefs.
+// - Toggle: PATCH merge-patch /prefs/<pk> body {"prefs": {"<slug>": {"enabled":…}}}
+//   (R1 form §1.5) via window.appStore.patchPrefs → `save` event (§1.9.9):
+//   <app-menu> and the current route update on the fly. 412 → toast.
+// - Configure: modal in /store (§1.9.11), form driven by the feature's
+//   config_schema (meta-schema §1.9.6), writes the `config` sub-key
+//   of the prefs (client-side validation v1, CA-A3).
+// - Admin (v1): metadata editing ONLY for already-packaged features
+//   (§1.9.8) → PATCH /features/<slug> (IRI by slug, CA-A7).
 import { html, css } from 'lit';
 import { OrbitComponent, getJson, resolveMembers } from '../boilerplate/index.js';
 import appStore, { AppStoreConflictError } from '../shared/app-store-api.js';
@@ -31,14 +31,14 @@ export class AppStore extends OrbitComponent {
     ...OrbitComponent.properties,
     prefsObj: { type: Object, attribute: false },
     locale: { type: String },
-    editingSlug: { type: String, attribute: false },   // modale config ouverte
+    editingSlug: { type: String, attribute: false },   // config modal open
     editingValues: { type: Object, attribute: false },
     editingErrors: { type: Object, attribute: false },
-    adminSlug: { type: String, attribute: false },     // modale admin ouverte
+    adminSlug: { type: String, attribute: false },     // admin modal open
     adminValues: { type: Object, attribute: false },
     adminError: { type: String, attribute: false },
     toast: { type: String, attribute: false },
-    catalogueMissing: { type: Boolean, attribute: false }, // GET /features/ → 404 (SQL non appliqué)
+    catalogueMissing: { type: Boolean, attribute: false }, // GET /features/ → 404 (SQL not applied)
   };
 
   static styles = css`
@@ -72,7 +72,7 @@ export class AppStore extends OrbitComponent {
     super();
     this.dataSrc = '/features/';
     this.prefsObj = {};
-    this.locale = window.getLocale?.() ?? 'fr';
+    this.locale = window.getLocale?.() ?? 'en';
     this.editingSlug = null;
     this.editingValues = {};
     this.editingErrors = {};
@@ -88,8 +88,8 @@ export class AppStore extends OrbitComponent {
     try {
       data = await getJson(this.dataSrc);
     } catch (e) {
-      // Catalogue absent côté serveur (sql/010–012 non appliqués) : état explicite,
-      // pas un crash — le déploiement back est la cause (voir sql/README.md).
+      // Catalogue missing server-side (sql/010–012 not applied): explicit state,
+      // not a crash — the back deployment is the cause (see sql/README.md).
       if (e.status === 404) {
         this.catalogueMissing = true;
         this.objects = [];
@@ -104,9 +104,9 @@ export class AppStore extends OrbitComponent {
     const role = appStore.getRole();
     this.objects = (await resolveMembers(data))
       .filter((f) => f && field(f, 'slug'))
-      // §1.4.1 role_min : la liste /store ne montre que les features accessibles à ce rôle (UX)
+      // §1.4.1 role_min: the /store list only shows features accessible to this role (UX)
       .filter((f) => roleAllowed(field(f, 'role_min') ?? 'all', role))
-      .sort((a, b) => ((field(a, 'menu_order') ?? 0) - (field(b, 'menu_order') ?? 0)) || field(a, 'slug').localeCompare(field(b, 'slug'))); // même tri que le menu (§1.9.1)
+      .sort((a, b) => ((field(a, 'menu_order') ?? 0) - (field(b, 'menu_order') ?? 0)) || field(a, 'slug').localeCompare(field(b, 'slug'))); // same sort as the menu (§1.9.1)
     await appStore.whenReady();
     this.prefsObj = appStore.getPrefs();
     return data;
@@ -130,22 +130,22 @@ export class AppStore extends OrbitComponent {
   async onToggle(feature, ev) {
     const enabled = ev.target.checked;
     try {
-      // CA-A2 : PATCH merge-patch forme R1 + save (§1.9.9) → menu à jour à chaud.
+      // CA-A2: PATCH merge-patch R1 form + save (§1.9.9) → menu updated on the fly.
       await appStore.patchPrefs(togglePatch(field(feature, "slug"), enabled));
       this.prefsObj = appStore.getPrefs();
       this.toast = '';
     } catch (e) {
       if (e instanceof AppStoreConflictError) {
-        this.toast = 'Modifié entre-temps — préférences rechargées.'; // §1.9.9 (412)
+        this.toast = 'Changed in the meantime — preferences reloaded.'; // §1.9.9 (412)
         this.prefsObj = appStore.getPrefs();
       } else {
-        this.toast = `Erreur ${e.status ?? ''} : ${e.message}`;
+        this.toast = `Error ${e.status ?? ''}: ${e.message}`;
       }
-      ev.target.checked = !enabled; // rollback visuel
+      ev.target.checked = !enabled; // visual rollback
     }
   }
 
-  // ------------------------------------------------------- modale config
+  // ------------------------------------------------------- config modal
   openConfig(feature) {
     const entry = this.prefsObj?.[field(feature, "slug")] ?? {};
     const schema = field(feature, 'config_schema') ?? { fields: [] };
@@ -168,7 +168,7 @@ export class AppStore extends OrbitComponent {
 
   async saveConfig(feature) {
     const schema = field(feature, 'config_schema') ?? { fields: [] };
-    // CA-A3 : validation front v1 contre le méta-schéma §1.9.6
+    // CA-A3: client-side validation v1 against the meta-schema §1.9.6
     const cleaned = {};
     for (const f of schema.fields ?? []) {
       if (this.editingValues[f.key] !== undefined) cleaned[f.key] = this.editingValues[f.key];
@@ -176,11 +176,11 @@ export class AppStore extends OrbitComponent {
     const { ok, errors } = validateConfig(schema, cleaned);
     if (!ok) { this.editingErrors = errors; return; }
     try {
-      await appStore.patchPrefs(configPatch(field(feature, "slug"), cleaned)); // sous-clé config
+      await appStore.patchPrefs(configPatch(field(feature, "slug"), cleaned)); // config sub-key
       this.prefsObj = appStore.getPrefs();
       this.closeConfig();
     } catch (e) {
-      this.editingErrors = { _global: e instanceof AppStoreConflictError ? 'Modifié entre-temps — rechargé.' : e.message };
+      this.editingErrors = { _global: e instanceof AppStoreConflictError ? 'Changed in the meantime — reloaded.' : e.message };
     }
   }
 
@@ -212,17 +212,17 @@ export class AppStore extends OrbitComponent {
       <div class="overlay" @click=${(e) => { if (e.target === e.currentTarget) this.closeConfig(); }}>
         <div class="modal" role="dialog" aria-label="config ${field(feature, "slug")}">
           <h2>${titleOf(feature, this.locale)} — configuration</h2>
-          ${schema.fields?.length ? schema.fields.map((f) => this.renderField(f)) : html`<p class="desc">Aucune option configurable.</p>`}
+          ${schema.fields?.length ? schema.fields.map((f) => this.renderField(f)) : html`<p class="desc">No configurable option.</p>`}
           ${this.editingErrors._global ? html`<div class="field-error">${this.editingErrors._global}</div>` : ''}
           <div class="foot">
-            <button class="secondary" @click=${() => this.closeConfig()}>Annuler</button>
-            <button @click=${() => this.saveConfig(feature)}>Enregistrer</button>
+            <button class="secondary" @click=${() => this.closeConfig()}>Cancel</button>
+            <button @click=${() => this.saveConfig(feature)}>Save</button>
           </div>
         </div>
       </div>`;
   }
 
-  // ------------------------------------------------------- admin (métadonnées)
+  // ------------------------------------------------------- admin (metadata)
   openAdmin(feature) {
     this.adminError = '';
     this.adminValues = {
@@ -241,7 +241,7 @@ export class AppStore extends OrbitComponent {
   async saveAdmin(feature) {
     let configSchema;
     try { configSchema = JSON.parse(this.adminValues.config_schema); }
-    catch { this.adminError = 'config_schema : JSON invalide'; return; }
+    catch { this.adminError = 'config_schema: invalid JSON'; return; }
     const patch = {
       title_i18n: { fr: this.adminValues.title_fr },
       description_i18n: { fr: this.adminValues.desc_fr },
@@ -251,7 +251,7 @@ export class AppStore extends OrbitComponent {
       config_schema: configSchema,
     };
     try {
-      // Admin v1 : métadonnées uniquement (§1.9.8) → PATCH /features/<slug> (CA-A7).
+      // Admin v1: metadata only (§1.9.8) → PATCH /features/<slug> (CA-A7).
       const res = await (window.sibStore?.fetchAuthn ?? fetch)(`/features/${field(feature, 'slug')}`, {
         method: 'PATCH',
         headers: { 'content-type': 'application/merge-patch+json', accept: 'application/ld+json' },
@@ -267,23 +267,23 @@ export class AppStore extends OrbitComponent {
     const v = this.adminValues;
     return html`
       <div class="overlay" @click=${(e) => { if (e.target === e.currentTarget) this.closeAdmin(); }}>
-        <div class="modal" role="dialog" aria-label="éditer ${field(feature, "slug")}">
-          <h2>Métadonnées — ${field(feature, "slug")}</h2>
-          <label for="a-title">Titre (fr)</label>
+        <div class="modal" role="dialog" aria-label="edit ${field(feature, "slug")}">
+          <h2>Metadata — ${field(feature, "slug")}</h2>
+          <label for="a-title">Title (fr)</label>
           <input id="a-title" type="text" .value=${v.title_fr} @input=${(e) => this.adminValues = { ...v, title_fr: e.target.value }}>
           <label for="a-desc">Description (fr)</label>
           <textarea id="a-desc" @input=${(e) => this.adminValues = { ...v, desc_fr: e.target.value }}>${v.desc_fr}</textarea>
-          <label for="a-icon">Icône (Material Icons)</label>
+          <label for="a-icon">Icon (Material Icons)</label>
           <input id="a-icon" type="text" .value=${v.icon} @input=${(e) => this.adminValues = { ...v, icon: e.target.value }}>
-          <label for="a-order">Ordre du menu</label>
+          <label for="a-order">Menu order</label>
           <input id="a-order" type="number" .value=${v.menu_order} @input=${(e) => this.adminValues = { ...v, menu_order: e.target.value }}>
-          <label for="a-def"><input id="a-def" type="checkbox" .checked=${v.default_enabled} @change=${(e) => this.adminValues = { ...v, default_enabled: e.target.checked }}> activée par défaut</label>
+          <label for="a-def"><input id="a-def" type="checkbox" .checked=${v.default_enabled} @change=${(e) => this.adminValues = { ...v, default_enabled: e.target.checked }}> enabled by default</label>
           <label for="a-schema">config_schema (JSON)</label>
           <textarea id="a-schema" @input=${(e) => this.adminValues = { ...v, config_schema: e.target.value }}>${v.config_schema}</textarea>
           ${this.adminError ? html`<div class="field-error">${this.adminError}</div>` : ''}
           <div class="foot">
-            <button class="secondary" @click=${() => this.closeAdmin()}>Annuler</button>
-            <button @click=${() => this.saveAdmin(feature)}>Enregistrer</button>
+            <button class="secondary" @click=${() => this.closeAdmin()}>Cancel</button>
+            <button @click=${() => this.saveAdmin(feature)}>Save</button>
           </div>
         </div>
       </div>`;
@@ -293,11 +293,11 @@ export class AppStore extends OrbitComponent {
   renderContent() {
     if (this.catalogueMissing) {
       return html`<div class="error" role="alert">
-        Catalogue indisponible : <code>GET /features/ → 404</code> côté serveur.
-        Intégrer <code>app-store/model/app-store.model.json</code> au <code>model.json</code> de l'app
-        (appliqué au boot par le nœud FAP-LDP) + exécuter <code>sql/012_backfill_prefs.sql</code>
-        (rôle <code>admin</code>) + seed <code>101_seed_demo.sql</code> — voir
-        <code>app-store/sql/README.md</code> — ou lancer en démo avec <code>VITE_FIXTURES=1</code>.
+        Catalogue unavailable: <code>GET /features/ → 404</code> server-side.
+        Integrate <code>app-store/model/app-store.model.json</code> into the app's <code>model.json</code>
+        (applied at boot by the FAP-LDP node) + run <code>sql/012_backfill_prefs.sql</code>
+        (role <code>admin</code>) + seed <code>101_seed_demo.sql</code> — see
+        <code>app-store/sql/README.md</code> — or run in demo mode with <code>VITE_FIXTURES=1</code>.
       </div>`;
     }
     const admin = this.isAdmin();
@@ -316,16 +316,16 @@ export class AppStore extends OrbitComponent {
               <div class="head">
                 <span class="material-icons">${field(f, 'icon') || 'extension'}</span>
                 <h3>${titleOf(f, this.locale)}</h3>
-                ${configured ? html`<span class="badge configured">configuré</span>` : ''}
+                ${configured ? html`<span class="badge configured">configured</span>` : ''}
               </div>
-              <p class="desc">${field(f, 'description_i18n')?.[this.locale] ?? field(f, 'description_i18n')?.fr ?? ''}</p>
+              <p class="desc">${field(f, 'description_i18n')?.[this.locale] ?? field(f, 'description_i18n')?.en ?? field(f, 'description_i18n')?.fr ?? ''}</p>
               <div class="actions">
-                <label class="switch" title="activer/désactiver">
+                <label class="switch" title="enable/disable">
                   <input type="checkbox" .checked=${enabled} @change=${(e) => this.onToggle(f, e)}>
                   <span class="slider"></span>
                 </label>
-                <button class="secondary" ?disabled=${!enabled} @click=${() => this.openConfig(f)}>Configurer</button>
-                ${admin ? html`<button class="secondary" @click=${() => this.openAdmin(f)}>Éditer</button>` : ''}
+                <button class="secondary" ?disabled=${!enabled} @click=${() => this.openConfig(f)}>Configure</button>
+                ${admin ? html`<button class="secondary" @click=${() => this.openAdmin(f)}>Edit</button>` : ''}
               </div>
             </li>`;
         })}

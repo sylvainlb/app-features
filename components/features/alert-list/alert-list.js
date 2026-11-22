@@ -1,13 +1,13 @@
-// <alert-list> — feature `alert-rules` (catalogue lot 1, route /alerts).
-// Évaluation **côté front** (décision catalogue §4.1) sur données déjà fetchées :
-//   - LDP publié : /gold/anomaly_candidates/ + /buildings/ (métadonnées parc)
-//   - seuils par bâtiment : config `thresholds` (object bâtiment→{kW, eur_day}) des prefs.
-// Canal de notification v1 = badge UI uniquement (pas d'email/push, §4.1).
+// <alert-list> — feature `alert-rules` (catalogue batch 1, route /alerts).
+// **Client-side** evaluation (catalogue decision §4.1) on already-fetched data:
+//   - published LDP: /gold/anomaly_candidates/ + /buildings/ (fleet metadata)
+//   - per-building thresholds: `thresholds` config (object building→{kW, eur_day}) from prefs.
+// v1 notification channel = UI badge only (no email/push, §4.1).
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import { loadAsset, getFeatureConfig, field, pick, fmtKwh, fmtFreshness } from '../../shared/feature-data.js';
 
-// Seuil applicable à une anomalie : clé = id bâtiment ou meter_id.
+// Threshold applicable to an anomaly: key = building id or meter_id.
 export function thresholdFor(thresholds, anomaly, buildings) {
   if (!thresholds || typeof thresholds !== 'object') return null;
   const meter = pick(anomaly, 'meter_id', 'site_id');
@@ -16,7 +16,7 @@ export function thresholdFor(thresholds, anomaly, buildings) {
   return thresholds[bid] ?? thresholds[String(meter)] ?? thresholds['*'] ?? null;
 }
 
-// Règle de dépassement : kW estimé > seuil kW, ou severity CRITICAL/HIGH quand un seuil existe.
+// Breach rule: estimated kW > kW threshold, or severity CRITICAL/HIGH when a threshold exists.
 export function isBreach(anomaly, th) {
   if (!th) return false;
   const kw = Number(pick(anomaly, 'active_power_kw', 'estimated_kw', 'kw') ?? NaN);
@@ -70,14 +70,14 @@ export class AlertList extends FeatureComponent {
     const n = this.alerts.length;
     return html`
       <div class="head">
-        <h2>Alertes personnalisées</h2>
-        <span class="badge ${n ? 'sev-HIGH' : 'st-ok'}">${n} alerte${n > 1 ? 's' : ''}</span>
-        <span class="fresh">fraîcheur : ${fmtFreshness(this.freshness)}</span>
+        <h2>Custom alerts</h2>
+        <span class="badge ${n ? 'sev-HIGH' : 'st-ok'}">${n} alert${n > 1 ? 's' : ''}</span>
+        <span class="fresh">freshness: ${fmtFreshness(this.freshness)}</span>
       </div>
       ${n === 0
-        ? html`<div class="empty">Aucune alerte — aucun seuil dépassé.</div>`
+        ? html`<div class="empty">No alert — no threshold breached.</div>`
         : html`<table>
-            <thead><tr><th>Date</th><th>Bâtiment</th><th>Type</th><th>Sévérité</th><th>Estimé</th><th>Seuil</th></tr></thead>
+            <thead><tr><th>Date</th><th>Building</th><th>Type</th><th>Severity</th><th>Estimated</th><th>Threshold</th></tr></thead>
             <tbody>
               ${this.alerts.map(({ anomaly, th }) => html`<tr>
                 <td>${field(anomaly, 'event_timestamp') ?? '—'}</td>
@@ -85,7 +85,7 @@ export class AlertList extends FeatureComponent {
                 <td>${pick(anomaly, 'type', 'anomaly_type') ?? '—'}</td>
                 <td><span class="badge sev-${String(pick(anomaly, 'severity') ?? 'LOW').toUpperCase()}">${String(pick(anomaly, 'severity') ?? '—').toUpperCase()}</span></td>
                 <td>${fmtKwh(pick(anomaly, 'active_power_kw', 'estimated_kw', 'kw'))}</td>
-                <td>${th?.kW != null ? `> ${th.kW} kW` : ''}${th?.eur_day != null ? ` / ${th.eur_day} €/j` : ''}</td>
+                <td>${th?.kW != null ? `> ${th.kW} kW` : ''}${th?.eur_day != null ? ` / ${th.eur_day} €/day` : ''}</td>
               </tr>`)}
             </tbody>
           </table>`}

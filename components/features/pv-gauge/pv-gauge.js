@@ -1,7 +1,7 @@
-// <pv-gauge> — feature `pv-selfconsumption` (catalogue lot 2, route /pv).
-// Autoconsommation PV (+ batterie optionnelle, config battery_kwh, défaut 0).
-// Données : conteneurs LDP pv_performance_hourly + net_grid_hourly.
-// net_kw < 0 = injection réseau ; autoconso = (PV − injection) / PV.
+// <pv-gauge> — feature `pv-selfconsumption` (catalogue batch 2, route /pv).
+// PV self-consumption (+ optional battery, config battery_kwh, default 0).
+// Data: LDP containers pv_performance_hourly + net_grid_hourly.
+// net_kw < 0 = grid injection; self-consumption = (PV − injection) / PV.
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import { loadAsset, getFeatureConfig, monthBounds, pick } from '../../shared/feature-data.js';
@@ -12,10 +12,10 @@ export function selfConsumptionPct(pvRows, gridRows, batteryKwh = 0) {
   for (const r of gridRows ?? []) inj += Math.max(0, -Number(pick(r, 'net_grid_kw', 'net_kw') ?? 0));
   if (pv <= 0) return null;
   const battery = Math.max(0, Number(batteryKwh ?? 0));
-  // la batterie absorbe une partie de l'injection → améliore l'autoconsommation
-  const self = Math.min(pv, pv - Math.min(inj, inj) + Math.min(inj, battery * 0)); // base : pv - inj
+  // the battery absorbs part of the injection → improves self-consumption
+  const self = Math.min(pv, pv - Math.min(inj, inj) + Math.min(inj, battery * 0)); // base: pv - inj
   const base = pv - inj;
-  const withBattery = Math.min(pv, base + Math.min(inj, battery)); // énergie stockée restituée
+  const withBattery = Math.min(pv, base + Math.min(inj, battery)); // stored energy returned
   return { pct: (Math.max(0, base) / pv) * 100, pctBattery: (Math.max(0, withBattery) / pv) * 100, pv, injection: inj };
 }
 
@@ -59,11 +59,11 @@ export class PvGauge extends FeatureComponent {
     const s = this.stats;
     const pct = this.batteryKwh > 0 ? s.pctBattery : s.pct;
     return html`
-      <h2 style="margin:0 0 6px;font-size:1.05rem">Autoconsommation PV${this.batteryKwh > 0 ? ` (+ batterie ${this.batteryKwh} kWh)` : ''}</h2>
+      <h2 style="margin:0 0 6px;font-size:1.05rem">PV self-consumption${this.batteryKwh > 0 ? ` (+ battery ${this.batteryKwh} kWh)` : ''}</h2>
       <div class="kpis">
-        <span class="kpi"><b>${pct == null ? '—' : pct.toFixed(0) + ' %'}</b>autoconsommation</span>
-        <span class="kpi"><b>${s.pv.toFixed(0)} kWh</b>production PV</span>
-        <span class="kpi"><b>${s.injection.toFixed(0)} kWh</b>injection réseau</span>
+        <span class="kpi"><b>${pct == null ? '—' : pct.toFixed(0) + ' %'}</b>self-consumption</span>
+        <span class="kpi"><b>${s.pv.toFixed(0)} kWh</b>PV production</span>
+        <span class="kpi"><b>${s.injection.toFixed(0)} kWh</b>grid injection</span>
       </div>
       <div class="gauge" role="progressbar" aria-valuenow=${(pct ?? 0).toFixed(0)}>
         <div style="width:${Math.min(100, pct ?? 0)}%"></div>

@@ -1,7 +1,7 @@
-// <budget-gauge> — feature `budget-tracker` (catalogue lot 2, route /budget).
-// Suivi conso réelle vs budget mensuel kWh/€ — config budget_kwh (req),
-// budget_eur, alert_pct (défaut 80). Données : conteneur LDP /gold/net_grid_hourly/ (mois en cours,
-// + LDP energy_cost_daily. Calcul côté front (pas de matview, §4 v0.3).
+// <budget-gauge> — feature `budget-tracker` (catalogue batch 2, route /budget).
+// Actual consumption vs monthly kWh/€ budget — config budget_kwh (req),
+// budget_eur, alert_pct (default 80). Data: LDP container /gold/net_grid_hourly/ (current month,
+// + LDP energy_cost_daily. Client-side computation (no matview, §4 v0.3).
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import { loadAsset, getFeatureConfig, monthBounds, field, pick, fmtKwh, fmtEur } from '../../shared/feature-data.js';
@@ -51,7 +51,7 @@ export class BudgetGauge extends FeatureComponent {
     this.alertPct = Number(config.alert_pct ?? 80);
     const { from, to } = monthBounds();
     const [hourly, costs] = await Promise.all([
-      loadAsset('net_grid_hourly', { from, to }).catch(() => []), // conteneur non publié → repli coût seul
+      loadAsset('net_grid_hourly', { from, to }).catch(() => []), // container not published → cost-only fallback
       loadAsset('energy_cost_daily'),
     ]);
     this.consumedKwh = hourly.reduce((s, r) => s + Math.max(0, Number(pick(r, 'net_grid_kw', 'net_kw') ?? 0)), 0);
@@ -70,11 +70,11 @@ export class BudgetGauge extends FeatureComponent {
     const status = budgetStatus(Math.max(pctKwh ?? 0, pctEur ?? 0), this.alertPct);
     const pct = Math.min(100, Math.max(pctKwh ?? 0, pctEur ?? 0));
     return html`
-      <h2 style="margin:0 0 6px;font-size:1.05rem">Budget énergétique mensuel</h2>
+      <h2 style="margin:0 0 6px;font-size:1.05rem">Monthly energy budget</h2>
       <div class="kpis">
-        <span class="kpi"><b>${fmtKwh(this.consumedKwh)}</b>conso mois en cours (budget ${fmtKwh(this.budgetKwh)})</span>
-        <span class="kpi"><b>${fmtEur(this.costEur)}</b>coût mois en cours (budget ${fmtEur(this.budgetEur)})</span>
-        <span class="badge ${status === 'over' ? 'sev-CRITICAL' : status === 'alert' ? 'sev-HIGH' : 'st-ok'}">${status === 'over' ? 'budget dépassé' : status === 'alert' ? `alerte ≥ ${this.alertPct} %` : 'dans le budget'}</span>
+        <span class="kpi"><b>${fmtKwh(this.consumedKwh)}</b>current month consumption (budget ${fmtKwh(this.budgetKwh)})</span>
+        <span class="kpi"><b>${fmtEur(this.costEur)}</b>current month cost (budget ${fmtEur(this.budgetEur)})</span>
+        <span class="badge ${status === 'over' ? 'sev-CRITICAL' : status === 'alert' ? 'sev-HIGH' : 'st-ok'}">${status === 'over' ? 'budget exceeded' : status === 'alert' ? `alert ≥ ${this.alertPct} %` : 'within budget'}</span>
       </div>
       <div class="gauge" role="progressbar" aria-valuenow=${pct.toFixed(0)}>
         <div class="g-${status === 'unknown' ? 'ok' : status}" style="width:${pct}%"></div>

@@ -1,16 +1,16 @@
-// build.mjs — build des 12 features du catalogue en bundles ES autonomes (v2).
+// build.mjs — builds the 12 catalogue features into self-contained ES bundles (v2).
 //
-// Pour chaque slug du catalogue (FEATURE_COMPONENTS) :
-//   dist/<slug>.js        ← bundle ESM self-contained (lit + boilerplate app-store inclus)
+// For each catalogue slug (FEATURE_COMPONENTS):
+//   dist/<slug>.js        ← self-contained ESM bundle (lit + app-store boilerplate included)
 //   dist/manifest.json    ← { slug: { tag, npm_package, version, file, sri (sha384-<b64>), bytes } }
-//   ../app-store/sql/130_features_catalogue_v2.sql  ← seed du catalogue v2 (idempotent : ON CONFLICT DO UPDATE, met à jour le sri à chaque rebuild)
+//   ../app-store/sql/130_features_catalogue_v2.sql  ← v2 catalogue seed (idempotent: ON CONFLICT DO UPDATE, updates the sri on each rebuild)
 //
-// cdn_url seedé en relatif same-origin `/features-dist/<slug>.js` (servi par le front :
-// app-supervision/public/features-dist/) — en prod, remplacer par le jsDelivr du package
-// publié : https://cdn.jsdelivr.net/npm/@facis/app-features@<version>/dist/<slug>.js
-// (le sri du manifest reste valable tant que le binaire publié est identique au build).
+// cdn_url seeded as relative same-origin `/features-dist/<slug>.js` (served by the front:
+// app-supervision/public/features-dist/) — in prod, replace with the jsDelivr URL of the
+// published package: https://cdn.jsdelivr.net/npm/@facis/app-features@<version>/dist/<slug>.js
+// (the manifest sri stays valid as long as the published binary is identical to the build).
 //
-// Usage : node scripts/build.mjs
+// Usage: node scripts/build.mjs
 import { build } from 'esbuild';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
@@ -23,19 +23,19 @@ const DIST = join(ROOT, 'dist');
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
 const { FEATURE_COMPONENTS } = await import(join(ROOT, 'components/features/index.js')).catch(() => ({}));
 
-// mapping slug → tag depuis le barrel (évite de parser le JS à la main si l'import échoue)
+// slug → tag mapping from the barrel (avoids parsing the JS by hand if the import fails)
 const components = Object.keys(FEATURE_COMPONENTS ?? {}).length
   ? FEATURE_COMPONENTS
   : Object.fromEntries(readdirSync(join(ROOT, 'components/features'), { withFileTypes: true })
     .filter((d) => d.isDirectory())
-    .map((d) => [d.name, d.name])); // fallback : dir == slug (pas le cas ici, voir FEATURE_COMPONENTS)
+    .map((d) => [d.name, d.name])); // fallback: dir == slug (not the case here, see FEATURE_COMPONENTS)
 
-// slug → tag réel (FEATURE_COMPONENTS), ex. 'pv-selfconsumption' → 'pv-gauge'
+// actual slug → tag (FEATURE_COMPONENTS), e.g. 'pv-selfconsumption' → 'pv-gauge'
 const barrel = readFileSync(join(ROOT, 'components/features/index.js'), 'utf8');
 const slugToTag = {};
 for (const m of barrel.matchAll(/'([a-z0-9-]+)':\s*'([a-z0-9-]+)'/g)) slugToTag[m[1]] = m[2];
 
-// métadonnées du catalogue (spec/app-store-catalogue.md v0.4 §3) : rôle, route, menu_order, config_schema
+// catalogue metadata (spec/app-store-catalogue.md v0.4 §3): role, route, menu_order, config_schema
 const CATALOGUE = JSON.parse(readFileSync(join(HERE, 'catalogue.json'), 'utf8'));
 
 mkdirSync(DIST, { recursive: true });
@@ -54,9 +54,9 @@ for (const [slug, tag] of Object.entries(slugToTag)) {
     minify: false,
     sourcemap: false,
     logLevel: 'silent',
-    // lit/@lit/* résolus depuis app-store/node_modules (arbre complet) — le symlink
-    // @facis/app-store → ../app-store et le node_modules local d'app-features ont des
-    // arbres partiels ; on force une seule source pour tout le bundle.
+    // lit/@lit/* resolved from app-store/node_modules (full tree) — the
+    // @facis/app-store → ../app-store symlink and the local app-features node_modules
+    // have partial trees; we force a single source for the whole bundle.
     alias: {
       lit: join(ROOT, '../app-store/node_modules/lit'),
       '@lit/task': join(ROOT, '../app-store/node_modules/@lit/task'),
@@ -73,36 +73,37 @@ for (const [slug, tag] of Object.entries(slugToTag)) {
     npm_package: pkg.name,
     version: pkg.version,
     file: 'dist/' + slug + '.js',
-    cdn_url: '/features-dist/' + slug + '.js', // same-origin (dev) ; prod = manifest.cdn
+    cdn_url: '/features-dist/' + slug + '.js', // same-origin (dev); prod = manifest.cdn
     sri,
     bytes: bytes.length,
     ...meta,
   };
-  console.log(`build ${slug} → dist/${slug}.js (${bytes.length} o, ${sri.slice(0, 20)}…)`);
+  console.log(`build ${slug} → dist/${slug}.js (${bytes.length} B, ${sri.slice(0, 20)}…)`);
 }
 
 writeFileSync(join(DIST, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
-// --- génère le seed SQL du catalogue v2 (app-store/sql/130_features_catalogue_v2.sql) ---
+// --- generates the v2 catalogue SQL seed (app-store/sql/130_features_catalogue_v2.sql) ---
 const esc = (s) => String(s ?? '').replace(/'/g, "''");
 const rows = Object.entries(manifest.features).map(([slug, f]) => {
   const cs = JSON.stringify(f.config_schema ?? { fields: [] }).replace(/'/g, "''");
-  return `('${esc(slug)}', '${esc(JSON.stringify(f.title_i18n ?? { fr: slug }))}', '${esc(JSON.stringify(f.description_i18n ?? {}))}', `
-    + `'${esc(f.icon ?? 'extension')}', ${f.menu_order ?? 50}, '${esc(f.role_min ?? 'gestionnaire')}', `
+  return `('${esc(slug)}', '${esc(JSON.stringify(f.title_i18n ?? { en: slug, fr: slug }))}', '${esc(JSON.stringify(f.description_i18n ?? {}))}', `
+    + `'${esc(f.icon ?? 'extension')}', ${f.menu_order ?? 50}, '${esc(f.role_min ?? 'manager')}', `
     + `'${esc(f.tag)}', '${esc(f.route ?? '/' + slug)}', '${cs}', ${f.default_enabled ?? false}, `
     + `true, '${esc(f.npm_package)}', '${esc(f.version)}', '${esc(f.cdn_url)}', '${esc(f.sri)}', '${esc(f.tag)}', false)`;
 }).join(',\n');
 
 const sql = `-- ============================================================================
--- App store — 130_features_catalogue_v2.sql : catalogue v2 des 12 features métier
--- (spec/app-store-catalogue.md v0.4 §3, lots 1–3) en features DISTANTES :
--- npm_package/version/cdn_url/sri/tag renseignés (020_features_v2.sql), sri =
--- sha384 réelle du bundle buildé (app-features/scripts/build.mjs → dist/manifest.json).
--- cdn_url en relatif same-origin /features-dist/<slug>.js (dev) ; prod = jsDelivr.
--- default_enabled=false (opt-in), in_menu=true, model_injected=false (pas de tables propres).
--- Généré par app-features/scripts/build.mjs — ne PAS éditer à la main.
--- Rôle : admin. Idempotent : ON CONFLICT (slug) DO UPDATE — rejoue au boot, met à jour
--- notamment sri/cdn_url/version à chaque rebuild des bundles (sinon le sri en base diverge du binaire servi).
+-- App store — 130_features_catalogue_v2.sql: v2 catalogue of the 12 business features
+-- (spec/app-store-catalogue.md v0.4 §3, batches 1–3) as DISTANT features:
+-- npm_package/version/cdn_url/sri/tag filled in (020_features_v2.sql), sri =
+-- actual sha384 of the built bundle (app-features/scripts/build.mjs → dist/manifest.json).
+-- cdn_url relative same-origin /features-dist/<slug>.js (dev); prod = jsDelivr.
+-- default_enabled=false (opt-in), in_menu=true, model_injected=false (no own tables).
+-- Generated by app-features/scripts/build.mjs — do NOT edit by hand.
+-- Role: admin. Idempotent: ON CONFLICT (slug) DO UPDATE — replayed at boot, updates
+-- notably sri/cdn_url/version on each bundle rebuild (otherwise the sri stored in the
+-- DB diverges from the served binary).
 -- ============================================================================
 
 INSERT INTO app.features (slug, title_i18n, description_i18n, icon, menu_order, role_min,
@@ -118,4 +119,4 @@ ON CONFLICT (slug) DO UPDATE SET
 `;
 const sqlPath = join(ROOT, '..', 'app-store', 'sql', '130_features_catalogue_v2.sql');
 writeFileSync(sqlPath, sql);
-console.log(`seed SQL généré → ${sqlPath} (${Object.keys(manifest.features).length} features)`);
+console.log(`seed SQL generated → ${sqlPath} (${Object.keys(manifest.features).length} features)`);

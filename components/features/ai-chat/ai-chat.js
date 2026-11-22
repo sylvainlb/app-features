@@ -1,9 +1,9 @@
-// <ai-chat> — feature `ai-assistant` (catalogue lot 3, route /assistant).
-// Assistant IA sur les données : POST /app/llm (CR-5 — **c'est la CR qui crée
-// l'endpoint** (fonction, pas une ressource de données : les données sont lues en LDP,
-// ACL/RLS) ; aucun flux LLM n'existe aujourd'hui côté FAP-light, catalogue §4.6). Contrat : auth session OIDC,
-// rate limit 10 req/min/user, audit dsp.audit. Le PDP refuse tout asset hors
-// allowlist `config.assets` — jamais tout le gold.
+// <ai-chat> — feature `ai-assistant` (catalogue batch 3, route /assistant).
+// Data AI assistant: POST /app/llm (CR-5 — **the CR creates the endpoint**
+// (a function, not a data resource: data is read via LDP, ACL/RLS);
+// no LLM flow exists yet on the FAP-light side, catalogue §4.6). Contract: OIDC session auth,
+// rate limit 10 req/min/user, dsp.audit audit. The PDP rejects any asset outside
+// the `config.assets` allowlist — never the whole gold.
 import { html, css } from 'lit';
 import { FeatureComponent } from '../../shared/feature-base.js';
 import appStore from '@facis/app-store/components/shared/app-store-api.js';
@@ -19,13 +19,13 @@ export async function askLlm(question, config) {
     body: JSON.stringify({ question, assets: config.assets ?? [], model: config.model ?? '' }),
   });
   if (!res.ok) {
-    const hint404 = 'CR-5 : endpoint POST /app/llm non déployé (créé par la CR, catalogue §4.6)';
+    const hint404 = 'CR-5: endpoint POST /app/llm not deployed (created by the CR, catalogue §4.6)';
     const e = new Error(res.status === 404
       ? `POST /app/llm → 404 : ${hint404}`
       : `POST /app/llm → ${res.status}`);
     e.status = res.status;
     e.url = url;
-    e.hint = res.status === 404 ? hint404 : 'plan de contrôle DSP — voir catalogue §4.7';
+    e.hint = res.status === 404 ? hint404 : 'DSP control plane — see catalogue §4.7';
     throw e;
   }
   return res.json();
@@ -78,7 +78,7 @@ export class AiChat extends FeatureComponent {
       this.messages = [...this.messages, { role: 'bot', text: String(res.answer ?? res.text ?? JSON.stringify(res)) }];
     } catch (e) {
       this.llmError = e.message;
-      this.messages = [...this.messages, { role: 'bot', text: `Erreur : ${e.message}` }];
+      this.messages = [...this.messages, { role: 'bot', text: `Error: ${e.message}` }];
     } finally {
       this.busy = false;
     }
@@ -86,17 +86,17 @@ export class AiChat extends FeatureComponent {
 
   renderContent() {
     return html`
-      <h2 style="margin:0 0 10px;font-size:1.05rem">Assistant IA sur les données</h2>
-      <p class="fresh">assets autorisés : ${(this.config?.assets ?? []).join(', ') || '—'} · modèle : ${this.config?.model || '—'}</p>
+      <h2 style="margin:0 0 10px;font-size:1.05rem">Data AI assistant</h2>
+      <p class="fresh">allowed assets: ${(this.config?.assets ?? []).join(', ') || '—'} · model: ${this.config?.model || '—'}</p>
       <div class="chat">
-        ${this.messages.length === 0 ? html`<div class="empty">Posez une question sur vos données (périmètre borné côté serveur, CR-5).</div>` : ''}
+        ${this.messages.length === 0 ? html`<div class="empty">Ask a question about your data (scope bounded server-side, CR-5).</div>` : ''}
         ${this.messages.map((m) => html`<div class="msg ${m.role}">${m.text}</div>`)}
       </div>
       ${this.llmError ? html`<div class="error" role="alert">${this.llmError}</div>` : ''}
       <div class="row">
         <input .value=${this.draft} @input=${(e) => { this.draft = e.target.value; }}
-               @keydown=${(e) => { if (e.key === 'Enter') this._send(); }} placeholder="Question…">
-        <button ?disabled=${this.busy} @click=${() => this._send()}>Envoyer</button>
+               @keydown=${(e) => { if (e.key === 'Enter') this._send(); }} placeholder="Your question…">
+        <button ?disabled=${this.busy} @click=${() => this._send()}>Send</button>
       </div>
     `;
   }

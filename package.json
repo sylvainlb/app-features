@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Composants features du catalogue app de supervision énergétique (app-store-catalogue.md v0.4 §3) — packagés dans l'app en v1, déclarés dans orbit.json. Dépend de @facis/app-store (mécanisme app store).",
+  "description": "Feature components of the energy supervision app catalogue (app-store-catalogue.md v0.4 §3) — packaged into the app in v1, declared in orbit.json. Depends on @facis/app-store (app store mechanism).",
   "scripts": {
     "test": "node --test tck/",
     "fixtures": "node fixtures/generate.mjs --days 30",

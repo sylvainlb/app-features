@@ -1,15 +1,17 @@
 {
-  "_comment": "Métadonnées des 12 features du catalogue v2 — source : spec/app-store-catalogue.md v0.4 §3 (lots 1–3). slug → {title_i18n, description_i18n, icon, menu_order, role_min, route, config_schema}. Le tag et le composant viennent de FEATURE_COMPONENTS (components/features/index.js).",
+  "_comment": "Metadata of the 12 catalogue v2 features — source: spec/app-store-catalogue.md v0.4 §3 (batches 1–3). slug → {title_i18n, description_i18n, icon, menu_order, role_min, route, config_schema}. The tag and the component come from FEATURE_COMPONENTS (components/features/index.js).",
   "alert-rules": {
     "title_i18n": {
-      "en": "Alert rules"
+      "en": "Alert rules",
+      "fr": "Règles d'alerte"
     },
     "description_i18n": {
-      "en": "Per-building anomaly thresholds (client-side evaluation, UI badge)."
+      "en": "Per-building anomaly thresholds (client-side evaluation, UI badge).",
+      "fr": "Seuils d'anomalie par bâtiment (évaluation côté client, badge UI)."
     },
     "icon": "notifications_active",
     "menu_order": 10,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/alerts",
     "config_schema": {
       "fields": [
@@ -23,14 +25,16 @@
   },
   "sla-dashboard": {
     "title_i18n": {
-      "en": "SLA dashboard"
+      "en": "SLA dashboard",
+      "fr": "Tableau de bord SLA"
     },
     "description_i18n": {
-      "en": "Ticket creation → RESOLVED delay vs SLA threshold."
+      "en": "Ticket creation → RESOLVED delay vs SLA threshold.",
+      "fr": "Délai création du ticket → RESOLVED vs seuil SLA."
     },
     "icon": "timer",
     "menu_order": 11,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/sla",
     "config_schema": {
       "fields": [
@@ -45,14 +49,16 @@
   },
   "report-builder": {
     "title_i18n": {
-      "en": "Report builder"
+      "en": "Report builder",
+      "fr": "Générateur de rapports"
     },
     "description_i18n": {
-      "en": "Client-side PDF/CSV report from already-fetched data."
+      "en": "Client-side PDF/CSV report from already-fetched data.",
+      "fr": "Rapport PDF/CSV côté client à partir des données déjà récupérées."
     },
     "icon": "description",
     "menu_order": 12,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/reports",
     "config_schema": {
       "fields": [
@@ -88,14 +94,16 @@
   },
   "budget-tracker": {
     "title_i18n": {
-      "en": "Budget tracker"
+      "en": "Budget tracker",
+      "fr": "Suivi de budget"
     },
     "description_i18n": {
-      "en": "Consumption vs kWh/€ budget with % alert (default 80)."
+      "en": "Consumption vs kWh/€ budget with % alert (default 80).",
+      "fr": "Conso vs budget kWh/€ avec alerte en % (défaut 80)."
     },
     "icon": "savings",
     "menu_order": 20,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/budget",
     "config_schema": {
       "fields": [
@@ -121,14 +129,16 @@
   },
   "price-optimizer": {
     "title_i18n": {
-      "en": "Price optimizer"
+      "en": "Price optimizer",
+      "fr": "Optimiseur de prix"
     },
     "description_i18n": {
-      "en": "Load-shifting advice based on hourly prices."
+      "en": "Load-shifting advice based on hourly prices.",
+      "fr": "Conseil de décalage de conso selon les prix horaires."
     },
     "icon": "trending_down",
     "menu_order": 21,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/optimize",
     "config_schema": {
       "fields": [
@@ -148,14 +158,16 @@
   },
   "pv-selfconsumption": {
     "title_i18n": {
-      "en": "PV self-consumption"
+      "en": "PV self-consumption",
+      "fr": "Autoconsommation PV"
     },
     "description_i18n": {
-      "en": "PV self-consumption rate, optional battery."
+      "en": "PV self-consumption rate, optional battery.",
+      "fr": "Taux d'autoconsommation PV, batterie optionnelle."
     },
     "icon": "solar_power",
     "menu_order": 22,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/pv",
     "config_schema": {
       "fields": [
@@ -170,14 +182,16 @@
   },
   "benchmark": {
     "title_i18n": {
-      "en": "Building benchmark"
+      "en": "Building benchmark",
+      "fr": "Benchmark des bâtiments"
     },
     "description_i18n": {
-      "en": "kWh/m² or €/m² comparison across buildings."
+      "en": "kWh/m² or €/m² comparison across buildings.",
+      "fr": "Comparaison kWh/m² ou €/m² entre bâtiments."
     },
     "icon": "bar_chart",
     "menu_order": 23,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/benchmark",
     "config_schema": {
       "fields": [
@@ -211,14 +225,16 @@
   },
   "regulatory-export": {
     "title_i18n": {
-      "en": "Regulatory export"
+      "en": "Regulatory export",
+      "fr": "Export réglementaire"
     },
     "description_i18n": {
-      "en": "Annual per-site CSV export (kWh/year, server-side)."
+      "en": "Annual per-site CSV export (kWh/year, server-side).",
+      "fr": "Export CSV annuel par site (kWh/an, côté serveur)."
     },
     "icon": "gavel",
     "menu_order": 24,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/regulatory",
     "config_schema": {
       "fields": [
@@ -242,14 +258,16 @@
   },
   "weather-correlation": {
     "title_i18n": {
-      "en": "Weather correlation"
+      "en": "Weather correlation",
+      "fr": "Corrélation météo"
     },
     "description_i18n": {
-      "en": "Consumption vs hourly weather (gold weather_hourly)."
+      "en": "Consumption vs hourly weather (gold weather_hourly).",
+      "fr": "Conso vs météo horaire (gold weather_hourly)."
     },
     "icon": "partly_cloudy_day",
     "menu_order": 30,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/weather",
     "config_schema": {
       "fields": [
@@ -274,14 +292,16 @@
   },
   "city-events": {
     "title_i18n": {
-      "en": "City events"
+      "en": "City events",
+      "fr": "Événements ville"
     },
     "description_i18n": {
-      "en": "Impact of urban events on consumption."
+      "en": "Impact of urban events on consumption.",
+      "fr": "Impact des événements urbains sur la conso."
     },
     "icon": "location_city",
     "menu_order": 31,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/city",
     "config_schema": {
       "fields": [
@@ -301,14 +321,16 @@
   },
   "ai-assistant": {
     "title_i18n": {
-      "en": "AI assistant"
+      "en": "AI assistant",
+      "fr": "Assistant IA"
     },
     "description_i18n": {
-      "en": "Chat over pod data via POST /app/llm (allowlist)."
+      "en": "Chat over pod data via POST /app/llm (allowlist).",
+      "fr": "Chat sur les données du pod via POST /app/llm (allowlist)."
     },
     "icon": "smart_toy",
     "menu_order": 32,
-    "role_min": "gestionnaire",
+    "role_min": "manager",
     "route": "/assistant",
     "config_schema": {
       "fields": [
@@ -329,10 +351,12 @@
   },
   "data-sharing": {
     "title_i18n": {
-      "en": "Data sharing"
+      "en": "Data sharing",
+      "fr": "Partage de données"
     },
     "description_i18n": {
-      "en": "Asset sharing offers (DSP control plane, admin)."
+      "en": "Asset sharing offers (DSP control plane, admin).",
+      "fr": "Offres de partage d'assets (plan de contrôle DSP, admin)."
     },
     "icon": "share",
     "menu_order": 33,
