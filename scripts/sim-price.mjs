@@ -1,0 +1,24 @@
+import { readFileSync } from 'node:fs';
+import { setupDom } from '../tck/helpers/dom.js';
+const window = setupDom();
+const TOK = readFileSync('/tmp/tok', 'utf8').trim();
+const BASE = 'http://localhost';
+window.sibStore = { fetchAuthn: async (u, init = {}) => fetch(new URL(String(u), BASE).href, { ...init, headers: { ...(init.headers ?? {}), Authorization: `Bearer ${TOK}`, accept: 'application/ld+json' } }) };
+const { appStore } = await import('@facis/app-store/components/shared/app-store-api.js');
+appStore.configure({ podUrl: BASE, getWebid: () => `${BASE}/users/1`, getRole: () => 'manager' });
+await appStore.refresh();
+const fd = await import('../components/shared/feature-data.js');
+const sa = await import('../components/features/shift-advisor/shift-advisor.js');
+const from = fd.isoDaysAgo(7), to = new Date().toISOString();
+console.log('window:', from, '→', to);
+const prices = await fd.loadAsset('price_hourly', { from, to });
+console.log('prices reçus:', prices.length, 'ex:', JSON.stringify(prices[0]).slice(0, 220));
+const cfg = fd.getFeatureConfig('price-optimizer');
+console.log('config:', JSON.stringify(cfg));
+const advice = sa.bestHours(prices, [], cfg);
+console.log('advice:', advice.length, advice.slice(0, 3));
+// sans fenêtre
+const all = await fd.loadAsset('price_hourly');
+console.log('prices sans fenêtre:', all.length);
+const advAll = sa.bestHours(all, [], cfg);
+console.log('advice sans fenêtre:', advAll.length);

@@ -9,8 +9,8 @@
       "version": "0.1.0",
       "file": "dist/alert-rules.js",
       "cdn_url": "/features-dist/alert-rules.js",
-      "sri": "sha384-+XjaiTK0OLt1DlooLHQEew0E2nPLbF8GiFTpbXkR1OQdFS9llKgp4vB2FeVKL6Bk",
-      "bytes": 50974,
+      "sri": "sha384-xQEDnEAkfekkNSHHJkKB9OQzqXiue7Ctsl3mil9351TFh6Hkfcvm/OkjzP863hon",
+      "bytes": 52282,
       "title_i18n": {
         "en": "Alert rules",
         "fr": "Règles d'alerte"
@@ -39,8 +39,8 @@
       "version": "0.1.0",
       "file": "dist/sla-dashboard.js",
       "cdn_url": "/features-dist/sla-dashboard.js",
-      "sri": "sha384-FopndsTUI1BRKjm08sSK7NTHqS/bc6x2n9tg5hbVsFE6nImjV7A/Do3akrFH4rZE",
-      "bytes": 50235,
+      "sri": "sha384-QAHkKlbKVO7ZQYv0F/EK66OyMUlUp075GK4cDlT5VxN23u3ilKaTQ0dfBViVAs1V",
+      "bytes": 51543,
       "title_i18n": {
         "en": "SLA dashboard",
         "fr": "Tableau de bord SLA"
@@ -70,8 +70,8 @@
       "version": "0.1.0",
       "file": "dist/report-builder.js",
       "cdn_url": "/features-dist/report-builder.js",
-      "sri": "sha384-kxZYz2S/Dx7M83EyJR6mriLydNOSNUCecBZdLxNqXMRS+El5KwrwpXYOnMucy3Zi",
-      "bytes": 53121,
+      "sri": "sha384-gFtFTHksViWlwGh1UreQrJ80YF9WwKq3eKeFv3rR1q0Z5EY5TeWnEQUTKHg/a7BF",
+      "bytes": 54429,
       "title_i18n": {
         "en": "Report builder",
         "fr": "Générateur de rapports"
@@ -122,8 +122,8 @@
       "version": "0.1.0",
       "file": "dist/budget-tracker.js",
       "cdn_url": "/features-dist/budget-tracker.js",
-      "sri": "sha384-zfoMVd7H7hcGEbznQA3cnoD2Axt5jhQ7s9O6O5bz0QPFbpMnsUuNkyqKUbhkgGPB",
-      "bytes": 51177,
+      "sri": "sha384-WwMLyMTxUmxBw2Qno7N2v/VdpIlo2D3lLSMV7y7Dd4HbkjD3lrIfVigHE3hn+d+r",
+      "bytes": 52485,
       "title_i18n": {
         "en": "Budget tracker",
         "fr": "Suivi de budget"
@@ -164,8 +164,8 @@
       "version": "0.1.0",
       "file": "dist/price-optimizer.js",
       "cdn_url": "/features-dist/price-optimizer.js",
-      "sri": "sha384-r7vvzdRMwsH9HGTRrDp8L9LPcKGOuD5xS8X6s5wI3/DcwwTuz3XJ3GHKiZpt4tlo",
-      "bytes": 50276,
+      "sri": "sha384-KFNRjXk5g9/qRNkQH18rDw7Y+OlnSZCPyYaX5oNrI9TcF5u/gGlKizQxwCQbWTXN",
+      "bytes": 51520,
       "title_i18n": {
         "en": "Price optimizer",
         "fr": "Optimiseur de prix"
@@ -200,8 +200,8 @@
       "version": "0.1.0",
       "file": "dist/pv-selfconsumption.js",
       "cdn_url": "/features-dist/pv-selfconsumption.js",
-      "sri": "sha384-tEcDsKykwNnvo4mm31t7S1mJd/OQdKpN/SlRB+MGyRctTqbDcRqOPoKLKsy3Isfa",
-      "bytes": 49897,
+      "sri": "sha384-H7ONdV6gz0YbAbQyNyOiDMsa8VNFkFQi/mUeCh9HBrp2NcbmiQyV3gDgpt5sBpeN",
+      "bytes": 51205,
       "title_i18n": {
         "en": "PV self-consumption",
         "fr": "Autoconsommation PV"
@@ -231,8 +231,8 @@
       "version": "0.1.0",
       "file": "dist/benchmark.js",
       "cdn_url": "/features-dist/benchmark.js",
-      "sri": "sha384-W0/8ygLTq5YjUdEvyYH3q8BdNGx7kbKGKaYh8U4CWWtL2Den+FyDE7aVBu11x5Wr",
-      "bytes": 51273,
+      "sri": "sha384-hBDeadbwmzzsbIMZXi3pNbO0aOnSSwgjI631s5Yit6mfCecYZAsCSnb+4Fr9SBbr",
+      "bytes": 52581,
       "title_i18n": {
         "en": "Building benchmark",
         "fr": "Benchmark des bâtiments"
@@ -281,8 +281,8 @@
       "version": "0.1.0",
       "file": "dist/regulatory-export.js",
       "cdn_url": "/features-dist/regulatory-export.js",
-      "sri": "sha384-QU/xLemVINEW13jnu1D2T/vU7IUstAZ2aaAbxIm/G2XFve7AUNPpTsRvmrFax/Sk",
-      "bytes": 50666,
+      "sri": "sha384-FzTKL6h3hg2h1WdURhU/JIBnBmPAyUCD3yb+oOeUUnLtrhDVFfB6yKlXHZnBC+c1",
+      "bytes": 51974,
       "title_i18n": {
         "en": "Regulatory export",
         "fr": "Export réglementaire"
@@ -321,8 +321,8 @@
       "version": "0.1.0",
       "file": "dist/weather-correlation.js",
       "cdn_url": "/features-dist/weather-correlation.js",
-      "sri": "sha384-IwfGYkDYTiie7xzfyGAnkoB7U4/fmK7eiVk6SWIIDAKpmKolZxHGTzxg40/q5HKB",
-      "bytes": 49710,
+      "sri": "sha384-VgAC4XCAOkKVrqoJBIbgSyIbtOsWcjj2fgDOsuxKVblUwf8qk9JuqSm1FER3X3Xd",
+      "bytes": 51018,
       "title_i18n": {
         "en": "Weather correlation",
         "fr": "Corrélation météo"
@@ -362,8 +362,8 @@
       "version": "0.1.0",
       "file": "dist/city-events.js",
       "cdn_url": "/features-dist/city-events.js",
-      "sri": "sha384-e7WfLWIcP63gFk2tSj24TkjvEAH7Bg3xFAolgi4OyuApKBp6h5FaerFcL0j9rGui",
-      "bytes": 48688,
+      "sri": "sha384-zHrhnq+w4aauo4YmlEiTtkd7SLsMk+INYo1PER3usUx0JF+f7HuxaFe1WmvW7Tis",
+      "bytes": 49996,
       "title_i18n": {
         "en": "City events",
         "fr": "Événements ville"
@@ -398,8 +398,8 @@
       "version": "0.1.0",
       "file": "dist/ai-assistant.js",
       "cdn_url": "/features-dist/ai-assistant.js",
-      "sri": "sha384-81uMSZoAi4506vVC1Ac6fpdq+aqqz/u1EcrWtjbMrcrelTP8ucZuzylVKJsIpDKK",
-      "bytes": 48799,
+      "sri": "sha384-3bHSxfPuUTlKms1zImvSNV2SVNTtd1ctdg3J2FJe/V8+AARlE5XWVxulZ/X6I2Nv",
+      "bytes": 49441,
       "title_i18n": {
         "en": "AI assistant",
         "fr": "Assistant IA"
@@ -435,8 +435,8 @@
       "version": "0.1.0",
       "file": "dist/data-sharing.js",
       "cdn_url": "/features-dist/data-sharing.js",
-      "sri": "sha384-lu7mIDem3GmaSKVGs5xIMF7koKcMe2H1MdFLVSkEvRbStX96Pxie1rTb3JN6784K",
-      "bytes": 48835,
+      "sri": "sha384-ViZQzjx2iR/erBiWvrloM/eBupmyKtxsh5kIsDSGrYheCPxl9Xk/LX2SWcgeLJrk",
+      "bytes": 49477,
       "title_i18n": {
         "en": "Data sharing",
         "fr": "Partage de données"

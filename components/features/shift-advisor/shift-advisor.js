@@ -64,11 +64,12 @@ export class ShiftAdvisor extends FeatureComponent {
     const config = getFeatureConfig('price-optimizer');
     const to = new Date().toISOString();
     const from = isoDaysAgo(7);
-    const [prices, netGrid] = await Promise.all([
+    // Perf: only price_hourly is needed (bestHours ranks hours by price); loading
+    // net_grid_hourly (3600+ members → one GET each) dominated the load time.
+    const [prices] = await Promise.all([
       loadAsset('price_hourly', { from, to }),
-      loadAsset('net_grid_hourly', { from, to }),
     ]);
-    this.advice = bestHours(prices, netGrid, config);
+    this.advice = bestHours(prices, [], config);
     this.objects = this.advice;
     return this.advice;
   }

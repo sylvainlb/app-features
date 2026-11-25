@@ -61,16 +61,29 @@ export function filterWindow(rows, { from, to } = {}) {
   });
 }
 
+// ISO timestamp embedded in a resource @id (resource_iri_pattern ends with the
+// time column, e.g. /gold/price_hourly/ALL/2026-11-23T17:00:00+00:00).
+const ISO_IN_ID = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+export function tsFromId(id) {
+  const m = ISO_IN_ID.exec(String(id ?? ''));
+  return m ? m[0] : null;
+}
+
 /**
  * Load an asset via its published LDP container (+ optional client-side windowing).
  * 404 = container not published → traced error (url = container, hint = CR to deliver).
+ *
+ * Perf: when from/to are given, container members whose @id embeds a timestamp
+ * OUTSIDE the window are NOT resolved (no per-member GET) — a gold hourly
+ * container holds 700–4000 members and each member costs one GET; resolving
+ * only the window turns ~4000 requests into ~150.
  */
 export async function loadAsset(assetId, { from, to } = {}) {
   const container = ASSETS[assetId];
   if (!container) throw new Error(`asset unknown to the LDP mapping: ${assetId}`);
-  let rows;
+  let data;
   try {
-    rows = await resolveMembers(await getJson(container));
+    data = await getJson(container);
   } catch (e) {
     if (e.status === 404) {
       e.url = container;
@@ -78,6 +91,19 @@ export async function loadAsset(assetId, { from, to } = {}) {
     }
     throw e;
   }
+  const members = data?.['ldp:contains'] ?? (Array.isArray(data) ? data : []);
+  let selected = members;
+  if (from || to) {
+    selected = members.filter((m) => {
+      const id = typeof m === 'string' ? m : m?.['@id'];
+      const ts = id ? tsFromId(id) : null;
+      if (!ts) return true; // no timestamp in @id → resolve, filterWindow will decide
+      if (from && ts < String(from).slice(0, ts.length)) return false;
+      if (to && ts > String(to).slice(0, ts.length)) return false;
+      return true;
+    });
+  }
+  const rows = await resolveMembers({ 'ldp:contains': selected });
   return filterWindow(rows, { from, to });
 }
 
