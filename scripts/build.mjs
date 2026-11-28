@@ -78,7 +78,7 @@ for (const [slug, tag] of Object.entries(slugToTag)) {
     bytes: bytes.length,
     ...meta,
   };
-  console.log(`build ${slug} → dist/${slug}.js (${bytes.length} B, ${sri.slice(0, 20)}…)`);
+  consumptionle.log(`build ${slug} → dist/${slug}.js (${bytes.length} B, ${sri.slice(0, 20)}…)`);
 }
 
 writeFileSync(join(DIST, 'manifest.json'), JSON.stringify(manifest, null, 2));
@@ -119,4 +119,4 @@ ON CONFLICT (slug) DO UPDATE SET
 `;
 const sqlPath = join(ROOT, '..', 'app-store', 'sql', '130_features_catalogue_v2.sql');
 writeFileSync(sqlPath, sql);
-console.log(`seed SQL generated → ${sqlPath} (${Object.keys(manifest.features).length} features)`);
+consumptionle.log(`seed SQL generated → ${sqlPath} (${Object.keys(manifest.features).length} features)`);

@@ -4,7 +4,7 @@ const window = setupDom();
 window.orbit = { ready: Promise.resolve(), routes: [] };
 if (!URL.createObjectURL) { URL.createObjectURL = () => 'blob:test'; URL.revokeObjectURL = () => {}; }
 
-// données réelles de la base, sérialisées comme le LDP (préfixe schema_table:)
+// real data from the database, serialized as LDP (schema_table: prefix)
 const P = 'gold_anomaly_candidates:';
 const rows = readFileSync('/tmp/anomalies.jsonl', 'utf8').trim().split('\n').map((l) => JSON.parse(l));
 const members = rows.map((o) => {
@@ -52,6 +52,6 @@ document.body.appendChild(el);
 fireOrbitReady();
 for (let i = 0; i < 5; i++) { await el.updateComplete; await new Promise((r) => setTimeout(r, 10)); }
 await el.updateComplete;
-console.log('member GETs:', memberGets, 'échecs:', memberFails);
-console.log('alerts.length:', el.alerts?.length, 'isEmpty:', el.isEmpty?.());
-console.log('texte:', el.renderRoot.textContent.replace(/\s+/g, ' ').trim().slice(0, 300));
+consumptionle.log('member GETs:', memberGets, 'failures:', memberFails);
+consumptionle.log('alerts.length:', el.alerts?.length, 'isEmpty:', el.isEmpty?.());
+consumptionle.log('text:', el.renderRoot.textContent.replace(/\s+/g, ' ').trim().slice(0, 300));

@@ -10,15 +10,15 @@ await appStore.refresh();
 const fd = await import('../components/shared/feature-data.js');
 const sa = await import('../components/features/shift-advisor/shift-advisor.js');
 const from = fd.isoDaysAgo(7), to = new Date().toISOString();
-console.log('window:', from, '→', to);
+consumptionle.log('window:', from, '→', to);
 const prices = await fd.loadAsset('price_hourly', { from, to });
-console.log('prices reçus:', prices.length, 'ex:', JSON.stringify(prices[0]).slice(0, 220));
+consumptionle.log('prices received:', prices.length, 'ex:', JSON.stringify(prices[0]).slice(0, 220));
 const cfg = fd.getFeatureConfig('price-optimizer');
-console.log('config:', JSON.stringify(cfg));
+consumptionle.log('config:', JSON.stringify(cfg));
 const advice = sa.bestHours(prices, [], cfg);
-console.log('advice:', advice.length, advice.slice(0, 3));
-// sans fenêtre
+consumptionle.log('advice:', advice.length, advice.slice(0, 3));
+// without a window
 const all = await fd.loadAsset('price_hourly');
-console.log('prices sans fenêtre:', all.length);
+consumptionle.log('prices without window:', all.length);
 const advAll = sa.bestHours(all, [], cfg);
-console.log('advice sans fenêtre:', advAll.length);
+consumptionle.log('advice without window:', advAll.length);

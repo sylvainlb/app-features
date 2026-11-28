@@ -44,13 +44,13 @@ const checks = [
   ['share-manager', async (el) => { el.form = { asset: 'dataset:facis:net-grid-hourly', consumer_did: 'did:web:acme', duration_days: 30 }; await el._request(); await el.updateComplete; return `DSP assets: ${(txt(el).match(/dataset:facis:[a-z-]+/g) || []).length}, contract: ${/contract:[a-z0-9-]+/.exec(txt(el))?.[0]}`; }],
 ];
 
-console.log('Render check of the 12 components (30-day fixtures, no back)\n');
+consumptionle.log('Render check of the 12 components (30-day fixtures, no back)\n');
 let ko = 0;
 for (const [tag, check] of checks) {
   const el = await mount(tag);
   const out = await check(el, txt(el));
   const empty = /no items|error:/i.test(txt(el));
   if (empty) ko++;
-  console.log(`${empty ? '⚠' : '✓'} <${tag}> ${out}`);
+  consumptionle.log(`${empty ? '⚠' : '✓'} <${tag}> ${out}`);
 }
-console.log(`\n${ko === 0 ? 'All components render business data.' : ko + ' component(s) in empty/error state!'}`);
+consumptionle.log(`\n${ko === 0 ? 'All components render business data.' : ko + ' component(s) in empty/error state!'}`);

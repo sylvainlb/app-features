@@ -17,9 +17,9 @@ window.sibStore = {
 const { appStore } = await import('@facis/app-store/components/shared/app-store-api.js');
 appStore.configure({ podUrl: BASE, getWebid: () => `${BASE}/users/1`, getRole: () => 'manager' });
 await appStore.refresh();
-console.log('prefs alert-rules:', JSON.stringify(appStore.getPrefs()?.['alert-rules']));
-console.log('prefs price-optimizer:', JSON.stringify(appStore.getPrefs()?.['price-optimizer']));
-console.log('feature alert-rules cdn_url:', appStore.getFeature('alert-rules')?.['app_features:cdn_url'] ?? appStore.getFeature('alert-rules')?.cdn_url);
+consumptionle.log('prefs alert-rules:', JSON.stringify(appStore.getPrefs()?.['alert-rules']));
+consumptionle.log('prefs price-optimizer:', JSON.stringify(appStore.getPrefs()?.['price-optimizer']));
+consumptionle.log('feature alert-rules cdn_url:', appStore.getFeature('alert-rules')?.['app_features:cdn_url'] ?? appStore.getFeature('alert-rules')?.cdn_url);
 await import('../components/features/index.js');
 
 for (const tag of ['alert-list', 'shift-advisor']) {
@@ -29,6 +29,6 @@ for (const tag of ['alert-list', 'shift-advisor']) {
   for (let i = 0; i < 40; i++) { await el.updateComplete; await new Promise((r) => setTimeout(r, 250)); if (el.state === "mounted" || el.alerts?.length || el.advice?.length) break; }
   await el.updateComplete;
   const t = el.renderRoot.textContent.replace(/\s+/g, ' ').trim();
-  console.log(`\n=== ${tag} === alerts/advice: ${el.alerts?.length ?? el.advice?.length} isEmpty: ${el.isEmpty?.()}`);
-  console.log(t.slice(0, 250));
+  consumptionle.log(`\n=== ${tag} === alerts/advice: ${el.alerts?.length ?? el.advice?.length} isEmpty: ${el.isEmpty?.()}`);
+  consumptionle.log(t.slice(0, 250));
 }

@@ -22,5 +22,5 @@ for (const uid of ['2', '3']) {
   const buildings = await fd.loadAsset('buildings').catch((e) => ({ err: e.message }));
   const cfg = fd.getFeatureConfig('alert-rules');
   const alerts = Array.isArray(anomalies) ? sa.computeAlerts(anomalies, cfg.thresholds, Array.isArray(buildings) ? buildings : []).length : 'ERR ' + anomalies.err;
-  console.log(`user ${uid} (${uname}, role=${ui.role}): anomalies=${Array.isArray(anomalies) ? anomalies.length : anomalies.err}, buildings=${Array.isArray(buildings) ? buildings.length : buildings.err}, thresholds=${cfg.thresholds ? 'oui' : 'NON'}, alertes=${alerts}`);
+  consumptionle.log(`user ${uid} (${uname}, role=${ui.role}): anomalies=${Array.isArray(anomalies) ? anomalies.length : anomalies.err}, buildings=${Array.isArray(buildings) ? buildings.length : buildings.err}, thresholds=${cfg.thresholds ? 'oui' : 'NON'}, alertes=${alerts}`);
 }

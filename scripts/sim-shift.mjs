@@ -18,5 +18,5 @@ for (let i = 0; i < 240; i++) {
   await el.updateComplete; await new Promise((r) => setTimeout(r, 500));
   if (el.advice?.length || el._task?.error) break;
 }
-console.log(`après ${((Date.now()-t0)/1000).toFixed(1)}s, ${calls} requêtes: advice=${el.advice?.length} erreur=${el._task?.error?.message ?? 'non'}`);
-console.log(el.renderRoot.textContent.replace(/\s+/g,' ').trim().slice(0,200));
+consumptionle.log(`after ${((Date.now()-t0)/1000).toFixed(1)}s, ${calls} requests: advice=${el.advice?.length} error=${el._task?.error?.message ?? 'none'}`);
+consumptionle.log(el.renderRoot.textContent.replace(/\s+/g,' ').trim().slice(0,200));

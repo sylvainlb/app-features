@@ -46,7 +46,7 @@ function weatherTempAt(d, rnd) {
   return seasonal + hourly + (rnd() - 0.5) * 3;
 }
 
-function consoKw(b, d, temp, rnd) {
+function consumptionKw(b, d, temp, rnd) {
   const p = PROFILES[b.profile];
   const dow = d.getUTCDay();
   const weekend = dow === 0 || dow === 6;
@@ -107,52 +107,52 @@ const TICKETS = [
 ];
 
 // Catalogue entries carry BOTH locales: en (default) + fr (locale).
-function featureRes(slug, { title, titleFr, desc, descFr, icon, order, role, comp, route, schema }) {
+function featureRes(slug, { title, desc, icon, order, role, comp, route, schema }) {
   return {
-    '@id': `/features/${slug}`, slug, title_i18n: { en: title, fr: titleFr }, description_i18n: { en: desc, fr: descFr },
+    '@id': `/features/${slug}`, slug, title_i18n: title, description_i18n: desc,
     icon, menu_order: order, role_min: role, component: comp, route,
     config_schema: { fields: schema }, default_enabled: false,
   };
 }
 
-// Row layout: [slug, titleEn, titleFr, descEn, descFr, icon, order, role, component, route, schema]
+// Row layout: [slug, title {en, fr}, description {en, fr}, icon, order, role, component, route, schema]
 const BASE_FEATURES = [
-  ['dashboard', 'Dashboard', 'Tableau de bord', 'Fleet map and energy summary.', 'Carte du parc et synthèse énergie.', 'map', 0, 'manager', 'building-map', '/', []],
-  ['anomalies', 'Anomalies', 'Anomalies', 'Anomalies detected by the FAP.', 'Anomalies détectées par la FAP.', 'warning', 1, 'manager', 'anomaly-list', '/anomalies', []],
-  ['tickets', 'Tickets', 'Tickets', 'Interventions and their tracking.', 'Interventions et leur suivi.', 'confirmation_number', 2, 'manager', 'ticket-board', '/tickets', []],
-  ['interventions', 'My interventions', 'Mes interventions', 'Assigned tickets (technician).', 'Tickets assignés (technicien).', 'assignment', 3, 'technician', 'ticket-board', '/interventions', []],
-  ['building-detail', 'Building detail', 'Détail bâtiment', 'Consumption/PV curves.', 'Courbes de conso/PV.', 'insights', 4, 'manager', 'energy-chart', '/buildings/:id', []],
-  ['store', 'App store', 'App store', 'Enable and configure features.', 'Activer / configurer les fonctionnalités.', 'storefront', 8, 'all', 'app-store', '/store', []],
-  ['admin', 'Administration', 'Administration', 'Users, roles, catalogue.', 'Utilisateurs, rôles, catalogue.', 'admin_panel_settings', 9, 'admin', 'user-admin', '/admin', []],
+  ['dashboard', { en: 'Dashboard', fr: 'Tableau de bord' }, { en: 'Fleet map and energy summary.', fr: 'Carte du parc et synthèse énergie.' }, 'map', 0, 'manager', 'building-map', '/', []],
+  ['anomalies', { en: 'Anomalies', fr: 'Anomalies' }, { en: 'Anomalies detected by the FAP.', fr: 'Anomalies détectées par la FAP.' }, 'warning', 1, 'manager', 'anomaly-list', '/anomalies', []],
+  ['tickets', { en: 'Tickets', fr: 'Tickets' }, { en: 'Interventions and their tracking.', fr: 'Interventions et leur suivi.' }, 'confirmation_number', 2, 'manager', 'ticket-board', '/tickets', []],
+  ['interventions', { en: 'My interventions', fr: 'Mes interventions' }, { en: 'Assigned tickets (technician).', fr: 'Tickets assignés (technicien).' }, 'assignment', 3, 'technician', 'ticket-board', '/interventions', []],
+  ['building-detail', { en: 'Building detail', fr: 'Détail bâtiment' }, { en: 'Consumption/PV curves.', fr: 'Courbes de conso/PV.' }, 'insights', 4, 'manager', 'energy-chart', '/buildings/:id', []],
+  ['store', { en: 'App store', fr: 'App store' }, { en: 'Enable and configure features.', fr: 'Activer / configurer les fonctionnalités.' }, 'storefront', 8, 'all', 'app-store', '/store', []],
+  ['admin', { en: 'Administration', fr: 'Administration' }, { en: 'Users, roles, catalogue.', fr: 'Utilisateurs, rôles, catalogue.' }, 'admin_panel_settings', 9, 'admin', 'user-admin', '/admin', []],
 ];
 const EXT_FEATURES = [
-  ['alert-rules', 'Custom alerts', 'Alertes personnalisées', 'Consumption/cost thresholds per building.', 'Seuils de conso/coût par bâtiment.', 'notifications', 10, 'manager', 'alert-list', '/alerts', [{ key: 'thresholds', label: 'Thresholds per building', type: 'object' }]],
-  ['sla-dashboard', 'Intervention SLA', 'SLA des interventions', 'Creation → resolution delay vs threshold.', 'Délai création → résolution vs seuil.', 'schedule', 11, 'manager', 'sla-view', '/sla', [{ key: 'sla_hours', label: 'SLA threshold (h)', type: 'number', default: 24 }]],
-  ['report-builder', 'PDF/CSV reports', 'Rapports PDF/CSV', 'Downloadable consumption/cost report.', 'Rapport conso/coût téléchargeable.', 'description', 12, 'manager', 'report-form', '/reports', [
+  ['alert-rules', { en: 'Custom alerts', fr: 'Alertes personnalisées' }, { en: 'Consumption/cost thresholds per building.', fr: 'Seuils de conso/coût par bâtiment.' }, 'notifications', 10, 'manager', 'alert-list', '/alerts', [{ key: 'thresholds', label: 'Thresholds per building', type: 'object' }]],
+  ['sla-dashboard', { en: 'Intervention SLA', fr: 'SLA des interventions' }, { en: 'Creation → resolution delay vs threshold.', fr: 'Délai création → résolution vs seuil.' }, 'schedule', 11, 'manager', 'sla-view', '/sla', [{ key: 'sla_hours', label: 'SLA threshold (h)', type: 'number', default: 24 }]],
+  ['report-builder', { en: 'PDF/CSV reports', fr: 'Rapports PDF/CSV' }, { en: 'Downloadable consumption/cost report.', fr: 'Rapport conso/coût téléchargeable.' }, 'description', 12, 'manager', 'report-form', '/reports', [
     { key: 'period', label: 'Period', type: 'enum', options: ['day', 'week', 'month', 'year'], default: 'month' },
     { key: 'building', label: 'Building', type: 'string' },
     { key: 'format', label: 'Format', type: 'enum', options: ['csv', 'pdf'], default: 'csv' }]],
-  ['budget-tracker', 'Monthly energy budget', 'Budget énergétique mensuel', 'Actual consumption vs kWh/€ budget.', 'Conso réelle vs budget kWh/€.', 'account_balance', 20, 'manager', 'budget-gauge', '/budget', [
+  ['budget-tracker', { en: 'Monthly energy budget', fr: 'Budget énergétique mensuel' }, { en: 'Actual consumption vs kWh/€ budget.', fr: 'Conso réelle vs budget kWh/€.' }, 'account_balance', 20, 'manager', 'budget-gauge', '/budget', [
     { key: 'budget_kwh', label: 'Budget kWh', type: 'number' }, { key: 'budget_eur', label: 'Budget €', type: 'number' },
     { key: 'alert_pct', label: 'Alert at %', type: 'number', default: 80 }]],
-  ['price-optimizer', 'Load shifting (off-peak hours)', 'Décalage de conso (heures creuses)', 'Cheapest slots.', 'Créneaux les moins chers.', 'swap_horiz', 21, 'manager', 'shift-advisor', '/optimize', [
+  ['price-optimizer', { en: 'Load shifting (off-peak hours)', fr: 'Décalage de conso (heures creuses)' }, { en: 'Cheapest slots.', fr: 'Créneaux les moins chers.' }, 'swap_horiz', 21, 'manager', 'shift-advisor', '/optimize', [
     { key: 'shiftable_kwh', label: 'Shiftable kWh', type: 'number' },
     { key: 'window', label: 'Window', type: 'string', default: '01:00-06:00' }]],
-  ['pv-selfconsumption', 'PV self-consumption', 'Autoconsommation PV', 'Self-consumption rate (+ battery).', 'Taux d’autoconsommation (+ batterie).', 'solar_power', 22, 'manager', 'pv-gauge', '/pv', [
+  ['pv-selfconsumption', { en: 'PV self-consumption', fr: 'Autoconsommation PV' }, { en: 'Self-consumption rate (+ battery).', fr: 'Taux d’autoconsommation (+ batterie).' }, 'solar_power', 22, 'manager', 'pv-gauge', '/pv', [
     { key: 'battery_kwh', label: 'Battery kWh', type: 'number', default: 0 }]],
-  ['benchmark', 'Building comparison', 'Comparaison des bâtiments', 'kWh/m² or €/m² per building.', 'kWh/m² ou €/m² par bâtiment.', 'bar_chart', 23, 'manager', 'benchmark-view', '/benchmark', [
+  ['benchmark', { en: 'Building comparison', fr: 'Comparaison des bâtiments' }, { en: 'kWh/m² or €/m² per building.', fr: 'kWh/m² ou €/m² par bâtiment.' }, 'bar_chart', 23, 'manager', 'benchmark-view', '/benchmark', [
     { key: 'metric', label: 'Metric', type: 'enum', options: ['kwh_m2', 'eur_m2'], default: 'kwh_m2' },
     { key: 'period', label: 'Period', type: 'enum', options: ['month', 'year'], default: 'month' },
     { key: 'ref_building', label: 'Reference building', type: 'string' }]],
-  ['regulatory-export', 'Regulatory export', 'Export réglementaire', 'Annual CSV/JSON per site (tertiary decree).', 'CSV/JSON annuel par site (décret tertiaire).', 'gavel', 24, 'manager', 'regulatory-export', '/regulatory', [
+  ['regulatory-export', { en: 'Regulatory export', fr: 'Export réglementaire' }, { en: 'Annual CSV/JSON per site (tertiary decree).', fr: 'CSV/JSON annuel par site (décret tertiaire).' }, 'gavel', 24, 'manager', 'regulatory-export', '/regulatory', [
     { key: 'year', label: 'Year', type: 'number' }, { key: 'format', label: 'Format', type: 'enum', options: ['csv', 'json'], default: 'csv' }]],
-  ['weather-correlation', 'Weather & degree-days', 'Météo & degré-jours', 'Temperature and degree-days base 18 °C.', 'Température et DJ base 18 °C.', 'cloud', 30, 'manager', 'weather-chart', '/weather', [
+  ['weather-correlation', { en: 'Weather & degree-days', fr: 'Météo & degré-jours' }, { en: 'Temperature and degree-days base 18 °C.', fr: 'Température et DJ base 18 °C.' }, 'cloud', 30, 'manager', 'weather-chart', '/weather', [
     { key: 'station', label: 'Station', type: 'string' }, { key: 'period', label: 'Period', type: 'enum', options: ['7d', '30d', '90d'], default: '30d' }]],
-  ['city-events', 'City events', 'Événements ville', 'Events near the fleet.', 'Événements à proximité du parc.', 'location_city', 31, 'manager', 'city-feed', '/city', [
+  ['city-events', { en: 'City events', fr: 'Événements ville' }, { en: 'Events near the fleet.', fr: 'Événements à proximité du parc.' }, 'location_city', 31, 'manager', 'city-feed', '/city', [
     { key: 'zone', label: 'Zone', type: 'string' }, { key: 'radius_km', label: 'Radius (km)', type: 'number' }]],
-  ['ai-assistant', 'AI assistant', 'Assistant IA', 'Questions about the data (bounded scope).', 'Questions sur les données (périmètre borné).', 'smart_toy', 32, 'manager', 'ai-chat', '/assistant', [
+  ['ai-assistant', { en: 'AI assistant', fr: 'Assistant IA' }, { en: 'Questions about the data (bounded scope).', fr: 'Questions sur les données (périmètre borné).' }, 'smart_toy', 32, 'manager', 'ai-chat', '/assistant', [
     { key: 'assets', label: 'Allowed assets', type: 'array', items: 'string' }, { key: 'model', label: 'Model', type: 'string' }]],
-  ['data-sharing', 'Data sharing', 'Partage de données', 'DSP contracts (admin).', 'Contrats DSP (admin).', 'share', 33, 'admin', 'share-manager', '/sharing', [
+  ['data-sharing', { en: 'Data sharing', fr: 'Partage de données' }, { en: 'DSP contracts (admin).', fr: 'Contrats DSP (admin).' }, 'share', 33, 'admin', 'share-manager', '/sharing', [
     { key: 'asset', label: 'Asset', type: 'string' }, { key: 'consumer_did', label: 'Consumer DID', type: 'string' },
     { key: 'duration_days', label: 'Duration (days)', type: 'number' }]],
 ];
@@ -191,9 +191,9 @@ export function generateFixtures({ days = 30, end = new Date() } = {}) {
     priceRows.push([ts, 'ALL', price]);
     for (const b of BUILDINGS) {
       const pv = pvKw(b, t, cloud);
-      const conso = consoKw(b, t, temp, rnd);
-      const net = Math.round((conso - pv) * 10) / 10;
-      netRows.push([ts, b.meter_id, net, Math.round(conso)]);
+      const consumption = consumptionKw(b, t, temp, rnd);
+      const net = Math.round((consumption - pv) * 10) / 10;
+      netRows.push([ts, b.meter_id, net, Math.round(consumption)]);
       if (pv > 0) pvRows.push([ts, b.meter_id, Math.round(pv * 10) / 10, Math.round((pv / b.pv_kw) * 1000) / 1000]);
       const day = ts.slice(0, 10);
       const k = `${day}|${b.meter_id}`;
@@ -243,9 +243,9 @@ export function generateFixtures({ days = 30, end = new Date() } = {}) {
 
   // --- app store: catalogue + prefs ---------------------------------------
   const featureSlugs = [];
-  for (const [slug, title, titleFr, desc, descFr, icon, order, role, comp, route, schema] of [...BASE_FEATURES.map((f) => [...f, f[10] ?? []]), ...EXT_FEATURES]) {
+  for (const [slug, title, desc, icon, order, role, comp, route, schema] of [...BASE_FEATURES.map((f) => [...f, f[8] ?? []]), ...EXT_FEATURES]) {
     featureSlugs.push({ '@id': `/features/${slug}` });
-    resources[`/features/${slug}`] = featureRes(slug, { title, titleFr, desc, descFr, icon, order, role, comp, route, schema });
+    resources[`/features/${slug}`] = featureRes(slug, { title, desc, icon, order, role, comp, route, schema });
   }
   containers['/features/'] = { columns: null, rows: featureSlugs };
   // base features enabled by default
@@ -274,5 +274,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const data = generateFixtures({ days });
   const out = join(dirname(fileURLToPath(import.meta.url)), 'data.js');
   writeFileSync(out, `// Generated by fixtures/generate.mjs — do not edit by hand.\n// ${data.days} days, end = ${data.end}\nexport default ${JSON.stringify(data)};\n`);
-  console.log(`fixtures written: ${out} (${(JSON.stringify(data).length / 1024).toFixed(0)} KB, ${data.containers['/gold/net_grid_hourly/'].rows.length} net_grid rows)`);
+  consumptionle.log(`fixtures written: ${out} (${(JSON.stringify(data).length / 1024).toFixed(0)} KB, ${data.containers['/gold/net_grid_hourly/'].rows.length} net_grid rows)`);
 }
